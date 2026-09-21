@@ -1,0 +1,11 @@
+// ============================================================================
+// niri Gestures
+// ============================================================================
+// Disables the top-left hot corner that opens/closes the overview when the
+// mouse reaches the corner (enabled by default in niri).
+// The overview is still available with Super+Tab (toggle-overview).
+gestures {
+    hot-corners {
+        off
+    }
+}

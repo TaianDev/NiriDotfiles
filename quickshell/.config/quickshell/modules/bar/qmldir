@@ -1,0 +1,10 @@
+module bar
+Bar 1.0 Bar.qml
+FedoraLogo 1.0 widgets/FedoraLogo.qml
+ResourceMeter 1.0 widgets/ResourceMeter.qml
+PowerPill 1.0 widgets/PowerPill.qml
+ScreenshotPill 1.0 widgets/ScreenshotPill.qml
+BatteryPill 1.0 widgets/BatteryPill.qml
+SystemPill 1.0 widgets/SystemPill.qml
+WorkspacePills 1.0 widgets/WorkspacePills.qml
+ActivateLinux 1.0 widgets/ActivateLinux.qml

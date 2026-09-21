@@ -1,0 +1,15 @@
+module Services
+WallpaperService 1.0 WallpaperService.qml
+singleton NotificationService 1.0 NotificationService.qml
+singleton AssistantService 1.0 AssistantService.qml
+singleton TranslationService 1.0 TranslationService.qml
+singleton NetworkStatusService 1.0 NetworkStatusService.qml
+singleton PopupManager 1.0 PopupManager.qml
+singleton NiriData 1.0 NiriData.qml
+singleton SystemMonitorService 1.0 SystemMonitorService.qml
+singleton AudioService 1.0 AudioService.qml
+singleton SessionService 1.0 SessionService.qml
+singleton AlarmService 1.0 AlarmService.qml
+singleton NotesService 1.0 NotesService.qml
+singleton LauncherService 1.0 LauncherService.qml
+singleton LauncherUsage 1.0 LauncherUsage.qml

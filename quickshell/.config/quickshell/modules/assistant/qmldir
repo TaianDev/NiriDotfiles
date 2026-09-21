@@ -1,0 +1,8 @@
+module assistant
+AssistantPill 1.0 AssistantPill.qml
+AssistantPanel 1.0 AssistantPanel.qml
+AssistantTab 1.0 AssistantTab.qml
+TranslatorTab 1.0 TranslatorTab.qml
+LanguageDropdown 1.0 LanguageDropdown.qml
+TextBox 1.0 TextBox.qml
+IconButton 1.0 IconButton.qml

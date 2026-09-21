@@ -1,0 +1,15 @@
+/* ~/.config/matugen/templates/wlogout-colors.css */
+
+/* Full-screen background (Overlay) - use scrim or black with transparency */
+@define-color wl-window-bg rgba(0, 0, 0, 0.2);
+
+/* "Bar" color (buttons in normal state) */
+@define-color wl-button-bg #1e1f25;
+@define-color wl-button-fg #e2e2e9;
+
+/* ACTIVE/HOVER button color (the highlighted one) */
+@define-color wl-button-active #adc6ff;
+@define-color wl-button-active-fg #112f60;
+
+/* Subtle borders to separate buttons if needed */
+@define-color wl-border #44474f;

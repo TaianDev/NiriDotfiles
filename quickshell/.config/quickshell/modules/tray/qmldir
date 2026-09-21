@@ -1,0 +1,4 @@
+module tray
+TrayWidget 1.0 TrayWidget.qml
+TrayPopup 1.0 TrayPopup.qml
+TrayMenuList 1.0 TrayMenuList.qml

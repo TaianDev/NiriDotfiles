@@ -1,0 +1,136 @@
+// ============================================================================
+// Named Workspaces (equivalent to Hyprland's workspace_rule)
+// ============================================================================
+// niri does not allow "workspace N -> monitor" as a direct rule; it is emulated
+// with named workspaces + open-on-output.
+//
+// BEHAVIOR DIFFERENCE: in niri, named workspaces ALWAYS EXIST (even when
+// empty), whereas in Hyprland workspaces are created on demand. If you prefer
+// dynamic workspaces, remove these declarations.
+//
+// NOTE: niri always keeps 1 empty workspace at the end of each monitor (it
+// cannot be disabled). The bar hides it by filtering on numeric names, so only
+// the 10 workspaces (1-5 on HDMI-A-1, 6-10 on eDP-1) are shown/accessed.
+
+// LG UltraGear (workspaces 1-5)
+workspace "1" { open-on-output "HDMI-A-1"; }
+workspace "2" { open-on-output "HDMI-A-1"; }
+workspace "3" { open-on-output "HDMI-A-1"; }
+workspace "4" { open-on-output "HDMI-A-1"; }
+workspace "5" { open-on-output "HDMI-A-1"; }
+
+// Laptop (workspaces 6-10)
+workspace "6" { open-on-output "eDP-1"; }
+workspace "7" { open-on-output "eDP-1"; }
+workspace "8" { open-on-output "eDP-1"; }
+workspace "9" { open-on-output "eDP-1"; }
+workspace "10" { open-on-output "eDP-1"; }
+
+// ============================================================================
+// Window Rules — Floating Windows & Utilities
+// ============================================================================
+// Hyprland matches `class`; niri matches `app-id`. For XWayland apps the
+// app-id may differ from the class: check it with `niri msg pick-window`.
+
+// Kitty (non-xray)
+window-rule {
+  match app-id="^Kitty$"
+  background-effect {
+    xray false;
+  }
+}
+// Kitty Floating (floating terminal)
+window-rule {
+    match app-id="kitty-floating"
+    open-floating true
+    default-column-width { fixed 800; }
+    default-window-height { fixed 500; }
+    background-effect {
+      xray false;
+    }
+}
+
+// Btop Floating
+window-rule {
+    match app-id="kitty-floating-btop"
+    open-floating true
+    default-column-width { fixed 1280; }
+    default-window-height { fixed 900; }
+}
+
+// XDG Desktop Portal (file pickers, etc.)
+window-rule {
+    match app-id="xdg-desktop-portal-gtk"
+    open-floating true
+}
+
+// Clipse (clipboard manager)
+// Note: Hyprland `stay_focused = true` has no equivalent in niri.
+window-rule {
+    match app-id="clipse"
+    open-floating true
+    default-column-width { fixed 495; }
+    default-window-height { fixed 450; }
+}
+
+// Satty
+window-rule {
+    match app-id="com.gabm.satty"
+    open-floating true
+    default-column-width { fixed 800; }
+    default-window-height { fixed 500; }
+}
+
+// ============================================================================
+// Window Rules — Blur (background-effect)
+// ============================================================================
+// niri >= 26.04. The window must be semi-transparent to see the effect.
+// xray (default) blurs the wallpaper; use `xray false` for normal blur
+// (experimental: it disappears during animations/dragging).
+window-rule {
+    match app-id="^zen$"
+    background-effect { blur true; xray false; }
+}
+
+// ============================================================================
+// Layer Rules — Blur (equivalent to Hyprland's layer_rule)
+// ============================================================================
+// niri does NOT allow per-layer animations (slide/fade). The launcher and
+// wallpaper changer enter/exit animations are handled on the QML side
+// (PopupEnterExit in quickshell).
+//
+// For blur, `background-effect { blur true; }` is NOT used on flare_launcher:
+// niri blurs the WHOLE layer surface, and the launcher is a full-screen
+// surface, so a rectangle would stick out of the panel. Instead Quickshell
+// requests blur with `BackgroundEffect.blurRegion`
+// (ext-background-effect-v1 protocol) and niri applies it exactly to the
+// launcher box region. Nothing needs to be declared here: niri's default mode
+// for layers is xray (blurs only the wallpaper).
+//
+// WARNING: do not add `blur false` to these layers, as it forces off the blur
+// requested by the client.
+//
+// Real shell (quickshell) namespaces:
+//   flare_bar_<output>, flare_launcher,
+//   flare_notifications_<screen>, flare_notif_popups_<screen>,
+//   flare_assistant_<screen>, swayosd, logout_dialog, signature
+
+layer-rule {
+    match namespace="swayosd"
+    background-effect { blur false; }
+}
+
+layer-rule {
+    match namespace="logout_dialog"
+    background-effect { blur true; }
+}
+
+layer-rule {
+    match namespace="signature"
+    background-effect { blur true; }
+}
+
+layer-rule {
+    match namespace="^flare_notifications_"
+    background-effect { blur false; }
+}

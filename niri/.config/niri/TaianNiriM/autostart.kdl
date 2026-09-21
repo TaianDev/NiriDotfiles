@@ -1,0 +1,35 @@
+// ============================================================================
+// niri Startup Applications & Daemons
+// ============================================================================
+// Equivalent to `hl.on("hyprland.start", ...)` + `hl.exec_cmd` from autostart.lua.
+//
+// `spawn-at-startup` does NOT use a shell: each argument is separate and does
+// not expand variables or `~` (except at the start of the binary). Commands
+// with environment variables, pipes or `~` use `spawn-sh-at-startup`.
+
+// System & D-Bus Environment
+spawn-sh-at-startup "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+// NOTE: hyprpolkitagent is part of the Hypr ecosystem but works as a generic
+// polkit agent. Compositor-agnostic alternative: polkit-gnome / polkit-kde-agent.
+spawn-at-startup "systemctl" "--user" "start" "hyprpolkitagent"
+spawn-sh-at-startup "gnome-keyring-daemon --start"
+
+// Wallpaper & Visuals
+spawn-at-startup "awww-daemon"
+// `hyprctl setcursor` moved to env.kdl (cursor {} section).
+
+// System Trays & Indicators
+spawn-at-startup "nm-applet" "--indicator"
+spawn-at-startup "blueman-applet"
+// spawn-at-startup "kdeconnect-indicator"
+
+// Utilities & Daemons
+spawn-sh-at-startup "GSK_RENDERER=gl swayosd-server --top-margin 0.95"
+spawn-at-startup "clipse" "-listen"
+
+// Idle / lock / suspend (config adapted for niri; see hypridle.conf)
+spawn-sh-at-startup "hypridle -c ~/.config/niri/hypridle.conf"
+
+// Shell & Panels
+// `qs -c overview` is removed: niri's native overview is used (toggle-overview).
+spawn-at-startup "quickshell"

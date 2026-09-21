@@ -1,0 +1,5 @@
+module Utils
+singleton ColorUtils 1.0 ColorUtils.qml
+singleton TimeUtils 1.0 TimeUtils.qml
+singleton IconResolver 1.0 IconResolver.qml
+singleton Fuzzy 1.0 Fuzzy.qml

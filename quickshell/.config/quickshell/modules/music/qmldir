@@ -1,0 +1,9 @@
+module music
+MusicWidget 1.0 MusicWidget.qml
+MusicPopup 1.0 MusicPopup.qml
+CavaBackdrop 1.0 CavaBackdrop.qml
+MusicSvgButton 1.0 MusicSvgButton.qml
+MusicVolumePanel 1.0 MusicVolumePanel.qml
+MusicFadePanel 1.0 MusicFadePanel.qml
+PlayerRow 1.0 PlayerRow.qml
+SeekBar 1.0 SeekBar.qml

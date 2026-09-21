@@ -1,0 +1,4 @@
+module Core
+singleton Theme 1.0 ThemeManager.qml
+singleton AppPaths 1.0 AppPaths.qml
+ThemeLoader 1.0 ThemeLoader.qml

@@ -1,0 +1,38 @@
+// ============================================================================
+// Keyboard & Mouse Input Configuration
+// ============================================================================
+// Equivalent to input.lua (hl.config input + hl.device).
+//
+// niri LIMITATION: per-device configuration is currently NOT supported
+// (the equivalent of `hl.device` for latam / altgr-intl). A global "us,latam"
+// layout is used and toggled with Super+Space / Super+Shift+Space
+// (defined in keybinds.kdl).
+
+input {
+    keyboard {
+        xkb {
+            layout "us,latam"
+            // Optional: apply altgr-intl to the us layout (per-layout list).
+            // variant "altgr-intl,"
+            // options "lv3:switch"
+        }
+    }
+
+    // Option A: hover-focus (the mouse focuses windows and monitors).
+    // max-scroll-amount: how far the view may scroll when focusing by hover.
+    //   20% = allows focusing the neighboring column peeking in
+    //   (column-width 0.8), without jumping to distant columns. Raise it if it
+    //   does not focus peeking columns, lower it if the view jumps too much.
+    //   It does not affect crossing monitors.
+    // NOTE: crossing the edge between monitors focuses the other monitor (niri
+    // does not allow separating window focus from output focus). To switch
+    // monitors without moving the mouse: Super+Ctrl+arrows.
+    focus-follows-mouse max-scroll-amount="60%"
+
+    touchpad {
+        tap
+        dwt
+        // natural_scroll = false in Hyprland -> `natural-scroll` is OMITTED
+        // (in niri the flag enables scroll inversion).
+    }
+}

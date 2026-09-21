@@ -1,0 +1,89 @@
+// ============================================================================
+// niri Core Layout & Aesthetics
+// ============================================================================
+// Equivalent to general.lua (general, scrolling, decoration, misc).
+
+layout {
+    // Hyprland: gaps_in 5 / gaps_out 9.
+    // niri has a single `gaps`; the extra outer gap is emulated with struts.
+    // 5 (gaps) + 4 (struts) = 9 outer.
+    gaps 5
+    struts {
+        top 4
+        bottom 4
+        left 4
+        right 4
+    }
+
+    // Approximate equivalent to focus_fit_method / column centering.
+    center-focused-column "on-overflow"
+
+    // scrolling.column_width = 0.8
+    default-column-width { proportion 0.8; }
+
+    // Widths cycled by `switch-preset-column-width` (Super+Alt+W / Shift+W)
+    preset-column-widths {
+        proportion 0.8
+        proportion 0.66667
+        proportion 0.5
+        proportion 0.33333
+    }
+
+    // decoration.border: Hyprland draws a border on ALL windows, so `border`
+    // is used here (not `focus-ring`).
+    // IMPORTANT: `on` is required here because this file is an include
+    // (in an included file, `border {}` does not activate without `on`).
+    border {
+        on
+        width 1
+        // Fallback; colors.kdl (matugen) overrides these colors.
+        active-color "#ffffff40"
+        inactive-color "#595959aa"
+    }
+
+    // The border acts as focus; the focus-ring is disabled.
+    focus-ring {
+        off
+    }
+
+    // decoration.shadow (range 20, color rgba(0,0,0,0.5)).
+    // render_power is not mappable (it is a Hyprland internal parameter).
+    shadow {
+        on
+        softness 20
+        spread 0
+        offset x=0 y=0
+        color "#00000080"
+    }
+
+    // misc: own background instead of the default logo/wallpaper.
+    background-color "#111111"
+}
+
+// decoration.rounding = 4 (global window rounding).
+window-rule {
+    geometry-corner-radius 4
+    clip-to-geometry true
+}
+
+// decoration.blur (Hyprland: size 4, passes 4, vibrancy 0.2).
+// niri >= 26.04. Approximate values.
+blur {
+    passes 4
+    offset 4.0
+    noise 0.0
+    saturation 1.0
+}
+
+// ============================================================================
+// Miscellaneous
+// ============================================================================
+// hyprshot does not work on niri: native capture actions are used
+// (Print / Shift+Print / Super+Print in keybinds.kdl).
+// niri supports a single path with strftime formatting (not one folder per type).
+screenshot-path "~/Pictures/Screenshots/All_display/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+// Ask clients to omit client-side decorations (CSD), which removes titlebars
+// and makes niri draw borders AROUND the window.
+// Requires restarting apps after enabling it.
+prefer-no-csd

@@ -1,0 +1,9 @@
+module Lockscreen
+singleton Theme 1.0 LockTheme.qml
+LockContext 1.0 LockContext.qml
+LockSurface 1.0 LockSurface.qml
+LockMusicPlayer 1.0 LockMusicPlayer.qml
+LockPowerMenu 1.0 LockPowerMenu.qml
+LockCava 1.0 LockCava.qml
+BubbleField 1.0 BubbleField.qml
+UserPill 1.0 UserPill.qml

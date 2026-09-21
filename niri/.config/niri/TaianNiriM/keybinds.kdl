@@ -1,0 +1,189 @@
+// ============================================================================
+// niri Key Bindings
+// ============================================================================
+// Equivalent to keybinds.lua. Translation of `hl.bind` + `hl.dsp.*` to niri's
+// native actions (niri msg action <...>).
+//
+// Key differences:
+//   - `mainMod` used to be "SUPER"; in niri it is written "Super".
+//   - Binds repeat by default (equivalent to repeating = true).
+//   - Hyprland `locked = true` -> `allow-when-locked=true` in niri.
+//   - Mouse drag/resize is NOT declared: niri already ships Mod+MouseLeft
+//     (move) and Mod+MouseRight (resize) as built-in gestures.
+//   - There is no `special workspace` (the "magic" scratchpad was removed).
+
+binds {
+    // ========================================================================
+    // Shell Panels & Widgets (Quickshell IPC controls)
+    // ========================================================================
+    Super+Shift+R { spawn-sh "qs ipc call launcher toggle wallpapers"; }
+    Super+R { spawn-sh "qs ipc call launcher toggle apps"; }
+    Super+Shift+W { spawn-sh "qs ipc call music_popup toggle"; }
+    Super+N { spawn-sh "qs ipc call notifications_panel toggle"; }
+    Super+D { spawn-sh "qs ipc call network_popup toggle"; }
+    Super+Shift+D { spawn-sh "qs ipc call date_popup toggle"; }
+    Super+T { spawn-sh "qs ipc call assistant_panel toggle"; }
+    Super+Shift+T { spawn-sh "qs ipc call assistant_translate translate \"$(wl-paste --primary)\""; }
+    // niri native overview (replaces `qs ipc -c overview call overview toggle`)
+    Super+Tab { toggle-overview; }
+    Super+Escape { spawn-sh "qs ipc call bar_popup close"; }
+
+    // ========================================================================
+    // Window Management & Focus Control
+    // ========================================================================
+    Super+Q { spawn "kitty"; }
+    Super+Shift+Q { spawn-sh "env IS_FLOATING=1 kitty --class kitty-floating"; }
+    Super+C { close-window; }
+    Super+V { toggle-window-floating; }
+
+    // Column layout (G3)
+    Super+F { maximize-column; }
+    Super+Shift+F { fullscreen-window; }
+    Super+Alt+F { maximize-window-to-edges; }
+    Super+W { toggle-column-tabbed-display; }
+    Super+Alt+C { center-column; }
+    Super+Alt+Shift+C { center-visible-columns; }
+    Super+Alt+E { expand-column-to-available-width; }
+
+    // Directional Focus
+    Super+Left { focus-column-left; }
+    Super+Right { focus-column-right; }
+    Super+Up { focus-window-up; }
+    Super+Down { focus-window-down; }
+
+    // Monitor focus (Super+Ctrl+arrows). Resize uses Super+Shift+arrows, so
+    // monitors use Ctrl to avoid clashing.
+    Super+Ctrl+Left { focus-monitor-left; }
+    Super+Ctrl+Right { focus-monitor-right; }
+    Super+Ctrl+Up { focus-monitor-up; }
+    Super+Ctrl+Down { focus-monitor-down; }
+
+    // Move column to another monitor (Super+Ctrl+Shift+arrows)
+    Super+Ctrl+Shift+Left { move-column-to-monitor-left; }
+    Super+Ctrl+Shift+Right { move-column-to-monitor-right; }
+    Super+Ctrl+Shift+Up { move-column-to-monitor-up; }
+    Super+Ctrl+Shift+Down { move-column-to-monitor-down; }
+
+    // Window Resizing
+    // Hyprland: relative resize x/y +-20. In niri the width belongs to the
+    // column and the height to the window. Accepts pixel values ("+20"/"-20").
+    Super+Shift+Up { set-window-height "+20"; }
+    Super+Shift+Down { set-window-height "-20"; }
+    Super+Shift+Left { set-column-width "-20"; }
+    Super+Shift+Right { set-column-width "+20"; }
+
+    // ========================================================================
+    // Layout (Super+Alt modifier)
+    // ========================================================================
+    // Move windows/columns within the layout (G1)
+    Super+Alt+Left { move-column-left; }
+    Super+Alt+Right { move-column-right; }
+    Super+Alt+Up { move-window-up; }
+    Super+Alt+Down { move-window-down; }
+
+    // Width/height: presets and fine adjustments (G2)
+    Super+Alt+W { switch-preset-column-width; }
+    Super+Alt+Shift+W { switch-preset-column-width-back; }
+    Super+Alt+H { switch-preset-window-height; }
+    Super+Alt+BackSpace { reset-window-height; }
+    Super+Alt+Minus { set-column-width "-10%"; }
+    Super+Alt+Equal { set-column-width "+10%"; }
+    Super+Alt+Shift+Minus { set-window-height "-10%"; }
+    Super+Alt+Shift+Equal { set-window-height "+10%"; }
+
+    // Consume/expel windows from columns (G4)
+    Super+Alt+BracketLeft { consume-or-expel-window-left; }
+    Super+Alt+BracketRight { consume-or-expel-window-right; }
+    Super+Alt+Comma { consume-window-into-column; }
+    Super+Alt+Period { expel-window-from-column; }
+
+    // Column ends and floating <-> tiling (G5)
+    Super+Alt+Home { focus-column-first; }
+    Super+Alt+End { focus-column-last; }
+    Super+Alt+Ctrl+Home { move-column-to-first; }
+    Super+Alt+Ctrl+End { move-column-to-last; }
+    Super+Alt+V { switch-focus-between-floating-and-tiling; }
+
+    // ========================================================================
+    // Workspaces (named workspaces declared in rules.kdl)
+    // ========================================================================
+    // Focus workspace (Super + [1-0]); 0 => workspace "10"
+    Super+1 { focus-workspace "1"; }
+    Super+2 { focus-workspace "2"; }
+    Super+3 { focus-workspace "3"; }
+    Super+4 { focus-workspace "4"; }
+    Super+5 { focus-workspace "5"; }
+    Super+6 { focus-workspace "6"; }
+    Super+7 { focus-workspace "7"; }
+    Super+8 { focus-workspace "8"; }
+    Super+9 { focus-workspace "9"; }
+    Super+0 { focus-workspace "10"; }
+
+    // Move window to workspace (Super + Shift + [1-0])
+    Super+Shift+1 { move-column-to-workspace "1"; }
+    Super+Shift+2 { move-column-to-workspace "2"; }
+    Super+Shift+3 { move-column-to-workspace "3"; }
+    Super+Shift+4 { move-column-to-workspace "4"; }
+    Super+Shift+5 { move-column-to-workspace "5"; }
+    Super+Shift+6 { move-column-to-workspace "6"; }
+    Super+Shift+7 { move-column-to-workspace "7"; }
+    Super+Shift+8 { move-column-to-workspace "8"; }
+    Super+Shift+9 { move-column-to-workspace "9"; }
+    Super+Shift+0 { move-column-to-workspace "10"; }
+
+    // Vertical workspace navigation (G6)
+    Super+Page_Down { focus-workspace-down; }
+    Super+Page_Up { focus-workspace-up; }
+    Super+Shift+Page_Down { move-workspace-down; }
+    Super+Shift+Page_Up { move-workspace-up; }
+    Super+Ctrl+Page_Down { move-column-to-workspace-down; }
+    Super+Ctrl+Page_Up { move-column-to-workspace-up; }
+    Super+Alt+Page_Down { focus-window-or-workspace-down; }
+    Super+Alt+Page_Up { focus-window-or-workspace-up; }
+
+    // Keyboard layout switching (see input.kdl: layout "us,latam")
+    Super+Space { switch-layout "next"; }
+    Super+Shift+Space { switch-layout "prev"; }
+
+    // ========================================================================
+    // Hardware, Media, & Display Controls
+    // ========================================================================
+    // Audio Controls
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "swayosd-client" "--output-volume" "raise"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "swayosd-client" "--output-volume" "lower"; }
+    XF86AudioMute allow-when-locked=true { spawn "swayosd-client" "--output-volume" "mute-toggle"; }
+    XF86AudioMicMute allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+    XF86AudioPlay allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioNext allow-when-locked=true { spawn "playerctl" "next"; }
+    XF86AudioPrev allow-when-locked=true { spawn "playerctl" "previous"; }
+
+    // Brightness Controls
+    XF86MonBrightnessUp allow-when-locked=true { spawn "swayosd-client" "--brightness" "+5"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "swayosd-client" "--brightness" "lower"; }
+
+    // ========================================================================
+    // Screenshots (native niri actions; hyprshot does not work on niri)
+    // ========================================================================
+    // Full screen / interactive region / window
+    Print { screenshot-screen; }
+    Shift+Print { screenshot; }
+    Super+Print { screenshot-window; }
+    // The save path is defined with `screenshot-path` in general.kdl.
+
+    // ========================================================================
+    // System Utilities & Applications
+    // ========================================================================
+    Super+M { spawn-sh "~/.config/wlogout/launcher.sh"; }
+    Super+Shift+M { quit; }
+    Super+E { spawn "nemo"; }
+    Super+Shift+E { spawn "zen-browser"; }
+    Super+Z { spawn "kitty" "--class" "clipse" "-e" "clipse"; }
+    Super+L { spawn-sh "~/.config/quickshell/scripts/session-lock.sh"; }
+
+    // ========================================================================
+    // Extra useful niri bindings (optional)
+    // ========================================================================
+    Super+Shift+Slash { show-hotkey-overlay; }
+    Super+Alt+Return { toggle-windowed-fullscreen; }
+    // Super+Escape { toggle-keyboard-shortcuts-inhibit; }
+}

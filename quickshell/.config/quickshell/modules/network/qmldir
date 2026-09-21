@@ -1,0 +1,4 @@
+module network
+NetworkPill 1.0 NetworkPill.qml
+WifiModule 1.0 WifiModule.qml
+BluetoothModule 1.0 BluetoothModule.qml
