@@ -3,7 +3,6 @@
 gtk-3.0/.config/gtk-3.0/gtk.css
 gtk-4.0/.config/gtk-4.0/gtk.css
 gtk-4.0/.config/gtk-4.0/gtk-dark.css
-quickshell/.config/quickshell/Theme.qml
 niri/.config/niri/colors.kdl
 swayosd/.config/swayosd/style.css
 
@@ -14,7 +13,11 @@ clipse/.config/clipse/*
 quickshell/.config/quickshell/alarms.json
 quickshell/.config/quickshell/notes.json
 quickshell/.config/quickshell/launcher_usage.json
+quickshell/.config/quickshell/session
 *.log
+
+# --- Screenshots ---
+wallpapers/Pictures/Screenshots/
 
 # --- Installer output ---
 failed-packages.txt

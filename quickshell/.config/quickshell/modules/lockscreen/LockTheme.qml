@@ -34,6 +34,9 @@ QtObject {
     property color inkErr: "#690005"
     readonly property alias onError: root.inkErr
 
+    // ─── TYPOGRAPHY ───
+    readonly property string fontFamily: "JetBrainsMono Nerd Font"
+
     function alpha(c, o) { return Qt.rgba(c.r, c.g, c.b, o) }
 
     function applyFromParsed(colors) {

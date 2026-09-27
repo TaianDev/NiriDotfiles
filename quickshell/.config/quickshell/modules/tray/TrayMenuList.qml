@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import "../../components"
 import "../../core"
 
 ColumnLayout {
@@ -25,7 +26,7 @@ ColumnLayout {
         visible: showBack
         spacing: 8
 
-        Text {
+        AppText {
             text: "‹ Back"
             color: Theme.primary
             font.pixelSize: 12
@@ -133,7 +134,7 @@ ColumnLayout {
                                 visible: modelData.icon !== ""
                             }
 
-                            Text {
+                            AppText {
                                 Layout.fillWidth: true
                                 text: modelData.text
                                 color: modelData.enabled ? Theme.inkSurf : Theme.inkSurfVar
@@ -141,7 +142,7 @@ ColumnLayout {
                                 elide: Text.ElideRight
                             }
 
-                            Text {
+                            AppText {
                                 text: "›"
                                 color: Theme.inkSurfVar
                                 font.pixelSize: 13

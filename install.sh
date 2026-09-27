@@ -12,17 +12,18 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PACKAGES=(niri quickshell wlogout matugen kitty gtk-3.0 gtk-4.0 fastfetch clipse zsh wallpapers)
+PACKAGES=(niri quickshell wlogout matugen kitty gtk-3.0 gtk-4.0 fastfetch zsh wallpapers)
 
 # Essential packages. "a|b" means: try "a", then "b".
 ESSENTIAL=(
     niri quickshell kitty wlogout jq gettext gettext-envsubst curl unzip stow git
     matugen "python3-pywal|pywal" adw-gtk3-theme papirus-icon-theme google-noto-emoji-fonts
-    awww swayosd wlsunset hypridle hyprpolkitagent clipse wl-clipboard
+    awww swayosd wlsunset swayidle hyprpolkitagent wl-clipboard
     pipewire pipewire-pulseaudio wireplumber pulseaudio-utils sound-theme-freedesktop
     brightnessctl playerctl
     NetworkManager bluez util-linux procps-ng psmisc dbus-tools flatpak
     gnome-keyring xdg-desktop-portal-gtk xdg-desktop-portal-gnome
+    greetd tuigreet xwayland-satellite
     cava grim slurp satty btop
     translate-shell
     zsh starship fastfetch eza bat fzf
@@ -181,7 +182,7 @@ backup_path() {
 }
 
 stow_packages() {
-    local config_pkgs=(niri quickshell wlogout matugen kitty gtk-3.0 gtk-4.0 fastfetch clipse)
+    local config_pkgs=(niri quickshell wlogout matugen kitty gtk-3.0 gtk-4.0 fastfetch)
     for pkg in "${config_pkgs[@]}"; do
         backup_path "$HOME/.config/$pkg"
     done
@@ -219,6 +220,11 @@ seed_theme() {
 # --- 7. Optional user services ----------------------------------------------
 enable_services() {
     systemctl --user enable --now hyprpolkitagent 2>/dev/null && ok "hyprpolkitagent enabled" || true
+    # gnome-keyring is D-Bus/systemd activated (`org.freedesktop.secrets`), which
+    # is what the flatpak Secret portal uses. Enabling the service also enables
+    # its socket (the unit has `Also=gnome-keyring-daemon.socket`).
+    systemctl --user enable gnome-keyring-daemon.service 2>/dev/null \
+        && ok "gnome-keyring enabled" || true
 }
 
 # --- 8. Report failures ------------------------------------------------------
@@ -254,7 +260,7 @@ main() {
     report_failures
 
     echo
-    ok "Done. Log out and back in (or start niri) to apply the changes."
+    ok "Done. Log out and back in (or start a niri-session) to apply the changes."
 }
 
 main

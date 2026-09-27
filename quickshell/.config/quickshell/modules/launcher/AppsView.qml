@@ -50,7 +50,7 @@ Item {
             out.push({
                 entry: entry,
                 name: entry.name ?? "",
-                score: best.score + Math.min(LauncherUsage.score(entry.id), 30) * 2,
+                score: best.score,
                 indices: nameIndices
             })
         }
@@ -111,8 +111,29 @@ Item {
 
     Connections {
         target: DesktopEntries
-        function onApplicationsChanged() { root.refresh() }
+        function onApplicationsChanged() {
+            root.refresh()
+            // Some entries settle a moment after the signal; refresh again.
+            refreshDebounce.restart()
+        }
     }
+
+    Connections {
+        target: LauncherService
+        function onIsOpenedChanged() {
+            if (LauncherService.isOpened)
+                root.refresh()
+        }
+    }
+
+    Timer {
+        id: refreshDebounce
+        interval: 300
+        repeat: false
+        onTriggered: root.refresh()
+    }
+
+    onVisibleChanged: if (root.visible) root.refresh()
 
     ListView {
         id: list
@@ -153,7 +174,7 @@ Item {
                     Layout.fillWidth: true
                     spacing: 2
 
-                    Text {
+                    AppText {
                         Layout.fillWidth: true
                         textFormat: Text.StyledText
                         text: Fuzzy.highlight(modelData.name, modelData.indices, Theme.primary)
@@ -164,7 +185,7 @@ Item {
                         maximumLineCount: 1
                     }
 
-                    Text {
+                    AppText {
                         Layout.fillWidth: true
                         text: modelData.entry.comment || modelData.entry.genericName || ""
                         color: Theme.inkSurfVar
@@ -190,7 +211,7 @@ Item {
         }
     }
 
-    Text {
+    AppText {
         anchors.centerIn: parent
         visible: root.results.length === 0
         text: "No applications found"

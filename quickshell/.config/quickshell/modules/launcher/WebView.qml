@@ -108,7 +108,16 @@ Item {
         const result = root.results[root.currentIndex]
         if (!result)
             return
-        Quickshell.execDetached(["zen-browser", isPrivate ? "--private-window" : "--new-tab", result.url])
+
+        // Zen is installed as a Flatpak (app.zen_browser.zen). Use xdg-open so
+        // the default browser is respected for normal tabs, and the Flatpak
+        // command for private windows.
+        if (isPrivate)
+            Quickshell.execDetached(["flatpak", "run", "app.zen_browser.zen",
+                "--private-window", result.url])
+        else
+            Quickshell.execDetached(["xdg-open", result.url])
+
         root.launched()
     }
 
@@ -154,7 +163,7 @@ Item {
                     Layout.fillWidth: true
                     spacing: 1
 
-                    Text {
+                    AppText {
                         Layout.fillWidth: true
                         text: modelData.label
                         color: index === root.currentIndex ? Theme.primary : Theme.inkSurf
@@ -164,7 +173,7 @@ Item {
                         maximumLineCount: 1
                     }
 
-                    Text {
+                    AppText {
                         Layout.fillWidth: true
                         text: modelData.sublabel
                         color: Theme.inkSurfVar
@@ -204,7 +213,7 @@ Item {
             opacity: 0.35
         }
 
-        Text {
+        AppText {
             width: parent.width
             horizontalAlignment: Text.AlignHCenter
             text: "Type to search with Zen"
@@ -212,7 +221,7 @@ Item {
             font.pixelSize: 13
         }
 
-        Text {
+        AppText {
             width: parent.width
             horizontalAlignment: Text.AlignHCenter
             text: "Prefixes: ddg \u00b7 yt \u00b7 gh \u00b7 fd \u00b7 wiki"

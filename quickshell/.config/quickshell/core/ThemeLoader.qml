@@ -11,11 +11,29 @@ Item {
         id: themeFile
         path: loader.themePath
         watchChanges: true
+        // The generated file only exists after the first wallpaper is applied.
+        // Suppress the "file does not exist" warning until it has loaded once.
+        printErrors: themeFile.loaded
         onLoaded: {
+            retry.stop()
             if (loader.themePath !== "")
                 loader.parse(themeFile.text())
         }
         onFileChanged: debounce.restart()
+        onLoadFailed: retry.start()
+    }
+
+    // watchChanges cannot observe a file that does not exist yet, so poll until
+    // matugen creates it (then stop).
+    Timer {
+        id: retry
+        interval: 2000
+        repeat: true
+        onTriggered: {
+            themeFile.reload()
+            if (themeFile.loaded)
+                retry.stop()
+        }
     }
 
     Connections {

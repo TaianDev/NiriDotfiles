@@ -64,7 +64,7 @@ Item {
             anchors.rightMargin: 8
             spacing: 6
 
-            Text {
+            AppText {
                 Layout.fillWidth: true
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
@@ -135,7 +135,7 @@ Item {
                        ? Theme.alpha(Theme.primary, 0.12)
                        : "transparent"
 
-                Text {
+                AppText {
                     anchors.left: parent.left
                     anchors.leftMargin: 10
                     anchors.verticalCenter: parent.verticalCenter

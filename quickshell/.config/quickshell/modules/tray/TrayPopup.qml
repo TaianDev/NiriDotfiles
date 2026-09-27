@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Services.SystemTray
 import "../../core"
 import "../../services"
+import "../../components"
 import "../../components/shell"
 import "."
 
@@ -300,7 +301,7 @@ PopupWindow {
                         }
                     }
 
-                    Text {
+                    AppText {
                         anchors.centerIn: parent
                         text: "No tray icons"
                         color: Theme.inkSurfVar

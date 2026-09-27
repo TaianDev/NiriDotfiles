@@ -3,3 +3,5 @@ UnifiedLauncher 1.0 UnifiedLauncher.qml
 LauncherModeBar 1.0 LauncherModeBar.qml
 AppsView 1.0 AppsView.qml
 WebView 1.0 WebView.qml
+ClipboardView 1.0 ClipboardView.qml
+ClipboardPreview 1.0 ClipboardPreview.qml

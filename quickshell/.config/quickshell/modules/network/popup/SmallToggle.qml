@@ -29,13 +29,13 @@ Rectangle {
             size: 16
             tint: root.isToggled ? root.activeColor : Theme.inkSurf
         }
-        Text {
+        AppText {
             visible: root.iconSource === "" && root.iconText !== ""
             text: root.iconText
             color: root.isToggled ? root.activeColor : Theme.inkSurf
             font.pixelSize: 16
         }
-        Text {
+        AppText {
             text: root.title
             color: Theme.inkSurf
             font.pixelSize: 13

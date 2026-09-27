@@ -54,12 +54,11 @@ PillBase {
             tint: Theme.inkSurf
         }
 
-        Text {
+        AppText {
             text: root.capacity.toString()
             color: Theme.inkSurf
             font.pixelSize: 12
             font.bold: true
-            font.family: "monospace"
         }
     }
 }

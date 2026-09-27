@@ -118,7 +118,7 @@ PanelWindow {
                                         tint: panel.currentTab === 0 ? Theme.primary : Theme.inkSurfVar
                                     }
 
-                                    Text {
+                                    AppText {
                                         text: "Assistant"
                                         color: panel.currentTab === 0 ? Theme.inkSurf : Theme.inkSurfVar
                                         font.pixelSize: 13
@@ -157,7 +157,7 @@ PanelWindow {
                                         tint: panel.currentTab === 1 ? Theme.primary : Theme.inkSurfVar
                                     }
 
-                                    Text {
+                                    AppText {
                                         text: "Translator"
                                         color: panel.currentTab === 1 ? Theme.inkSurf : Theme.inkSurfVar
                                         font.pixelSize: 13

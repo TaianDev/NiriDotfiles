@@ -30,7 +30,7 @@ Item {
         Behavior on opacity { ColorAnimation { duration: 150 } }
     }
 
-    Text {
+    AppText {
         id: layoutText
         anchors.left: svgIcon.right
         anchors.leftMargin: 2

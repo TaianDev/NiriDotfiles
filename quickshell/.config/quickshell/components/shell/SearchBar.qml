@@ -6,6 +6,7 @@ import "../../components"
 
 TextField {
     id: root
+    font.family: Theme.fontFamily
 
     property color accentColor: Theme.primary
     property string iconSource: AppPaths.iconsDir + "magnifying.svg"

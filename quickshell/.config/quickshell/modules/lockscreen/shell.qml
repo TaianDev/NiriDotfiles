@@ -1,3 +1,5 @@
+//@ pragma IconTheme Papirus-Dark
+
 // Archivo: modules/lockscreen/lock.qml
 import QtQuick
 import Quickshell
@@ -21,7 +23,7 @@ ShellRoot {
 
     onHomeDirChanged: {
         if (homeDir !== "") {
-            themeFileView.path = root.homeDir + "/.config/quickshell/Theme.qml"
+            themeFileView.path = root.homeDir + "/.local/state/quickshell/Theme.qml"
             themeFileView.reload()
         }
     }

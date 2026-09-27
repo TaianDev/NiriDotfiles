@@ -70,6 +70,8 @@ PanelWindow {
             appsView.moveSelection(-1)
         else if (mode === LauncherService.modeWeb)
             webView.moveSelection(-1)
+        else if (mode === LauncherService.modeClipboard)
+            clipboardView.moveSelection(-1)
     }
 
     function handleDown() {
@@ -77,6 +79,8 @@ PanelWindow {
             appsView.moveSelection(1)
         else if (mode === LauncherService.modeWeb)
             webView.moveSelection(1)
+        else if (mode === LauncherService.modeClipboard)
+            clipboardView.moveSelection(1)
     }
 
     function handleEnter(inTerminal) {
@@ -84,6 +88,8 @@ PanelWindow {
             appsView.activateCurrent(inTerminal)
         else if (mode === LauncherService.modeWallpapers)
             wallGrid.applySelected()
+        else if (mode === LauncherService.modeClipboard)
+            clipboardView.copyCurrent()
         else
             webView.activateCurrent(inTerminal)
     }
@@ -96,6 +102,8 @@ PanelWindow {
     Connections {
         target: LauncherService
         function onQueryChanged() {
+            if (searchInput.text !== LauncherService.query)
+                searchInput.text = LauncherService.query
             if (launcher.mode === LauncherService.modeWallpapers)
                 wallGrid.searchText = LauncherService.query
         }
@@ -140,21 +148,29 @@ PanelWindow {
                         id: searchInput
                         Layout.fillWidth: true
                         Layout.preferredHeight: 48
-                        iconSource: AppPaths.iconsDir + (launcher.mode === LauncherService.modeWeb ? "globe.svg" : "magnifying.svg")
+                        iconSource: AppPaths.iconsDir + (launcher.mode === LauncherService.modeWeb
+                            ? "globe.svg"
+                            : launcher.mode === LauncherService.modeClipboard
+                            ? "clipboard-attachment.svg"
+                            : "magnifying.svg")
                         placeholderText: launcher.mode === LauncherService.modeApps
                             ? "Search applications..."
                             : launcher.mode === LauncherService.modeWallpapers
                             ? "Search wallpapers..."
+                            : launcher.mode === LauncherService.modeClipboard
+                            ? "Search clipboard..."
                             : "Search the web with Zen..."
-                        onTextChanged: LauncherService.query = text
+                        onTextEdited: LauncherService.query = text
 
                         Keys.onShortcutOverride: event => {
                             const wallpaperNav = (event.key === Qt.Key_Left || event.key === Qt.Key_Right)
                                 && launcher.mode === LauncherService.modeWallpapers
+                            const clipboardDelete = event.key === Qt.Key_Delete
+                                && launcher.mode === LauncherService.modeClipboard
                             if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab
                                 || event.key === Qt.Key_Up || event.key === Qt.Key_Down
                                 || event.key === Qt.Key_Return || event.key === Qt.Key_Enter
-                                || wallpaperNav)
+                                || wallpaperNav || clipboardDelete)
                                 event.accepted = true
                         }
 
@@ -193,6 +209,15 @@ PanelWindow {
                                 event.accepted = true
                             } else if (ctrl && event.key === Qt.Key_3) {
                                 LauncherService.setMode(LauncherService.modeWeb)
+                                event.accepted = true
+                            } else if (ctrl && event.key === Qt.Key_4) {
+                                LauncherService.setMode(LauncherService.modeClipboard)
+                                event.accepted = true
+                            } else if (event.key === Qt.Key_Delete && launcher.mode === LauncherService.modeClipboard) {
+                                if (event.modifiers & Qt.ShiftModifier)
+                                    clipboardView.clearAll()
+                                else
+                                    clipboardView.removeCurrent()
                                 event.accepted = true
                             }
                         }
@@ -236,14 +261,24 @@ PanelWindow {
                             query: LauncherService.query
                             onLaunched: LauncherService.close()
                         }
+
+                        ClipboardView {
+                            id: clipboardView
+                            anchors.fill: parent
+                            visible: launcher.mode === LauncherService.modeClipboard
+                            query: LauncherService.query
+                            onCopied: LauncherService.close()
+                        }
                     }
 
-                    Text {
+                    AppText {
                         Layout.fillWidth: true
                         text: launcher.mode === LauncherService.modeApps
                             ? "Up/Down navigate \u00b7 Enter launch \u00b7 Ctrl+Enter terminal \u00b7 Tab mode \u00b7 Esc close"
                             : launcher.mode === LauncherService.modeWallpapers
                             ? "Left/Right browse \u00b7 Enter apply \u00b7 Tab mode \u00b7 Esc close"
+                            : launcher.mode === LauncherService.modeClipboard
+                            ? "Up/Down navigate \u00b7 Enter copy \u00b7 Del remove \u00b7 Shift+Del clear \u00b7 preview at right \u00b7 Esc close"
                             : "Up/Down navigate \u00b7 Enter open in Zen \u00b7 Ctrl+Enter private \u00b7 Tab mode \u00b7 Esc close"
                         color: Theme.inkSurfVar
                         opacity: 0.5

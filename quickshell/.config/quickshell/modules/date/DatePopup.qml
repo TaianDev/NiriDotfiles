@@ -117,6 +117,10 @@ PopupWindow {
             Qt.callLater(prepareTimerTab)
         } else {
             shell.active = false
+            // Leaving edit mode on close means reopening the popup shows the
+            // normal tab again and drops the layer-surface keyboard grab.
+            if (notesTabInstance.editorOpen) notesTabInstance.editorOpen = false
+            if (alarmTabInstance.editorOpen) alarmTabInstance.editorOpen = false
         }
     }
 
@@ -134,7 +138,7 @@ PopupWindow {
 
         Item {
             id: popupKeyInput
-            focus: true
+            focus: popup.currentTab === 2
             Keys.onPressed: event => {
                 if (popup.currentTab === 2)
                     timerTabInstance.handleKey(event)
@@ -203,7 +207,7 @@ PopupWindow {
                                     size: 20
                                     tint: popup.currentTab === modelData.index ? popup.textMain : popup.textMuted
                                 }
-                                Text {
+                                AppText {
                                     Layout.alignment: Qt.AlignHCenter
                                     text: modelData.name
                                     color: popup.currentTab === modelData.index ? popup.textMain : popup.textMuted

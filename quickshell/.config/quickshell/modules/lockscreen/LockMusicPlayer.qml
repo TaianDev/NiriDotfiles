@@ -82,12 +82,14 @@ Item {
             const name = names[i]
             if (!name || name === "" || name === "zen" || name.includes(" "))
                 continue
-            if (Quickshell.hasThemeIcon(name)) {
-                const path = Quickshell.iconPath(name)
-                if (path !== "") return path
-            }
+            // Only use theme icons that actually exist. Quickshell.iconPath(name)
+            // without the check argument renders a "missing texture" image for
+            // unknown icons, which is what made the player icon look blank.
+            if (!Quickshell.hasThemeIcon(name))
+                continue
             const path = Quickshell.iconPath(name)
-            if (path !== "") return path
+            if (path !== "")
+                return path
         }
         return ""
     }
@@ -278,7 +280,7 @@ Item {
 
                     Item { Layout.fillHeight: true; Layout.preferredHeight: 1 }
 
-                    Text {
+                    AppText {
                         Layout.fillWidth: true
                         text: root.trackTitle !== "" ? root.trackTitle : "No title"
                         color: Theme.onBackground
@@ -289,7 +291,7 @@ Item {
                         maximumLineCount: 1
                     }
 
-                    Text {
+                    AppText {
                         Layout.fillWidth: true
                         text: root.trackArtist !== "" ? root.trackArtist : "Unknown Artist"
                         color: Theme.onBackgroundMuted
@@ -447,7 +449,7 @@ Item {
                                     visible: status === Image.Ready
                                 }
 
-                                Text {
+                                AppText {
                                     id: playerLabel
                                     anchors.verticalCenter: parent.verticalCenter
                                     text: root.playerName

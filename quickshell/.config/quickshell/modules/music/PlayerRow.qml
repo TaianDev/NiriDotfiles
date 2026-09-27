@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import Quickshell
+import "../../components"
 import "../../core"
 import "../../utils"
 
@@ -95,7 +96,7 @@ RowLayout {
                 visible: status === Image.Ready
             }
 
-            Text {
+            AppText {
                 id: capsuleLabel
                 anchors.verticalCenter: parent.verticalCenter
                 text: (root.activePlayer?.identity ?? root.activePlayer?.playerName ?? "").toString()

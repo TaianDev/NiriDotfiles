@@ -64,7 +64,7 @@ Item {
                     layer.effect: ColorOverlay { color: Theme.onBackground }
                 }
 
-                Text {
+                AppText {
                     id: actionLabel
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: actionIcon.right
@@ -218,7 +218,7 @@ Item {
                                 }
                             }
 
-                            Text {
+                            AppText {
                                 Layout.fillWidth: true
                                 Layout.alignment: Qt.AlignVCenter
                                 text: modelData.label
@@ -282,7 +282,7 @@ Item {
 
                 Item { width: 1; height: 4 }
 
-                Text {
+                AppText {
                     Layout.fillWidth: true
                     text: "Are you sure?"
                     color: Theme.onBackground
@@ -291,7 +291,7 @@ Item {
                     horizontalAlignment: Text.AlignHCenter
                 }
 
-                Text {
+                AppText {
                     Layout.fillWidth: true
                     text: "Do you want to " + root.currentAction.label.toLowerCase() + "?"
                     color: Theme.onBackgroundMuted
@@ -315,7 +315,7 @@ Item {
                         border.color: alpha(Theme.outline, 0.3)
                         Behavior on color { ColorAnimation { duration: 120 } }
 
-                        Text {
+                        AppText {
                             anchors.centerIn: parent
                             text: "Cancel"
                             color: Theme.onBackground
@@ -341,7 +341,7 @@ Item {
                             : alpha(Theme.error, 0.15)
                         Behavior on color { ColorAnimation { duration: 120 } }
 
-                        Text {
+                        AppText {
                             anchors.centerIn: parent
                             text: "Accept"
                             color: Theme.error

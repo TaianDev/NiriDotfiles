@@ -96,7 +96,7 @@ Item {
                 size: 12; tint: Theme.inkSurfVar
             }
 
-            Text {
+            AppText {
                 Layout.fillWidth: true
                 text: root.currentPath.replace(AppPaths.wallpapersPath, "Wallpapers")
                 color: Theme.inkSurfVar; font.pixelSize: 11; elide: Text.ElideMiddle
@@ -173,7 +173,7 @@ Item {
                             }
                         }
 
-                        Text {
+                        AppText {
                             anchors.bottom: parent.bottom
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottomMargin: 8
@@ -197,7 +197,7 @@ Item {
                         anchors.top: parent.top; anchors.right: parent.right
                         anchors.margins: 6
                         width: 44; height: 20; radius: 10; color: Theme.primary
-                        Text {
+                        AppText {
                             anchors.centerIn: parent
                             text: "Active"; color: Theme.inkPrim; font.pixelSize: 10; font.bold: true
                         }
@@ -238,6 +238,7 @@ Item {
 
             TextField {
                 id: gridSearch
+                font.family: Theme.fontFamily
                 Layout.fillWidth: true; Layout.preferredHeight: 44
                 visible: !root.embedded
                 placeholderText: "Search wallpapers..."
@@ -272,7 +273,7 @@ Item {
                 Layout.preferredWidth: 100; Layout.preferredHeight: 44; radius: 12
                 visible: !root.embedded
                 color: Theme.primary
-                Text {
+                AppText {
                     anchors.centerIn: parent
                     text: "Apply"; font.pixelSize: 14; font.bold: true; color: Theme.inkPrim
                 }
@@ -301,11 +302,11 @@ Item {
 
                 RowLayout {
                     Layout.fillWidth: true
-                    Text {
+                    AppText {
                         Layout.fillWidth: true; text: "Browse folders"
                         color: Theme.inkSurf; font.pixelSize: 14; font.bold: true
                     }
-                    Text {
+                    AppText {
                         text: "\u2715"; color: Theme.inkSurfVar; font.pixelSize: 14
                         MouseArea {
                             anchors.fill: parent; anchors.margins: -6
@@ -315,7 +316,7 @@ Item {
                     }
                 }
 
-                Text {
+                AppText {
                     Layout.fillWidth: true
                     text: root.currentPath.replace(AppPaths.wallpapersPath, "Wallpapers")
                     color: Theme.inkSurfVar; font.pixelSize: 10; elide: Text.ElideMiddle
@@ -335,8 +336,8 @@ Item {
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
                             spacing: 8
-                            Text { text: "\u2B06"; font.pixelSize: 14 }
-                            Text {
+                            AppText { text: "\u2B06"; font.pixelSize: 14 }
+                            AppText {
                                 Layout.fillWidth: true; text: ".. (parent folder)"
                                 color: Theme.inkSurf; font.pixelSize: 12
                             }
@@ -357,7 +358,7 @@ Item {
                             SvgIcon {
                                 source: root.iconsPath + "files.svg"; size: 14; tint: Theme.inkSurf
                             }
-                            Text {
+                            AppText {
                                 Layout.fillWidth: true; text: fileName
                                 color: Theme.inkSurf; font.pixelSize: 12; elide: Text.ElideRight
                             }
@@ -373,7 +374,7 @@ Item {
                 Rectangle {
                     Layout.fillWidth: true; Layout.preferredHeight: 38; radius: 10
                     color: Theme.primary
-                    Text {
+                    AppText {
                         anchors.centerIn: parent
                         text: "Use this folder"; font.pixelSize: 12; font.bold: true
                         color: Theme.inkPrim

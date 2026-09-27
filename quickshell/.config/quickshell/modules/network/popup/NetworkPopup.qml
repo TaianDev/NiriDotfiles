@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import "../../../core"
 import "../../../services"
+import "../../../components"
 import "../../../components/shell"
 
 PopupWindow {
@@ -90,7 +91,7 @@ PopupWindow {
             visible: opacity > 0
             Behavior on opacity { NumberAnimation { duration: 250 } }
 
-            Text {
+            AppText {
                 x: 16
                 anchors.verticalCenter: parent.verticalCenter
                 text: "‹ Back"
@@ -104,14 +105,14 @@ PopupWindow {
                     onClicked: popup.currentPage = 0
                 }
             }
-            Text {
+            AppText {
                 anchors.centerIn: parent
                 text: popup.currentPage === 1 ? "Wi-Fi Networks" : "Bluetooth Devices"
                 color: Theme.inkSurf
                 font.pixelSize: 14
                 font.bold: true
             }
-            Text {
+            AppText {
                 x: parent.width - width - 16
                 anchors.verticalCenter: parent.verticalCenter
                 text: "↻ Updt"

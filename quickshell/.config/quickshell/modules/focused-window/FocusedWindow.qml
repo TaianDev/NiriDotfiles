@@ -66,13 +66,13 @@ Item {
             spacing: 1
             Behavior on opacity { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
 
-            Text {
+            AppText {
                 text: root.displayAppId
                 color: Qt.rgba(1, 1, 1, 0.45)
                 font.pixelSize: 9
             }
 
-            Text {
+            AppText {
                 text: root.displayTitle
                 color: Theme.inkSurf
                 font.pixelSize: 12

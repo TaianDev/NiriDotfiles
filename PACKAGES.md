@@ -38,7 +38,7 @@ the end.
 
 | Package | Notes |
 | --- | --- |
-| `matugen` | Generates Theme.qml, gtk.css, colors.kdl, swayosd, wlogout |
+| `matugen` | Generates Theme.qml (`~/.local/state/quickshell/`), gtk.css, colors.kdl, swayosd, wlogout |
 | `python3-pywal` | `wal`; kitty colors |
 | `adw-gtk3-theme` | GTK theme (`adw-gtk3` / `adw-gtk3-dark`) |
 | `papirus-icon-theme` | Icons (`Papirus-Dark`) |
@@ -51,10 +51,11 @@ the end.
 | `awww` | Wallpaper daemon (`awww-daemon`, `awww img`, `awww query`) |
 | `swayosd` | Volume/brightness OSD |
 | `wlsunset` | Night light |
-| `hypridle` | Idle/lock/suspend |
+| `swayidle` | Idle/lock/suspend (`niri/.config/niri/scripts/idle.sh`) |
 | `hyprpolkitagent` | Polkit authentication agent |
 | `clipse` | Clipboard manager |
 | `wl-clipboard` | `wl-paste` / `wl-copy` |
+| `xwayland-satellite` | X11 apps (niri integrates it on-demand; required for X11 flatpaks) |
 
 ## Audio / hardware
 
@@ -80,13 +81,29 @@ the end.
 | `dbus-tools` | `dbus-update-activation-environment` |
 | `flatpak` | Bar update pill |
 
+## Login / session
+
+| Package | Notes |
+| --- | --- |
+| `greetd` | Display manager (greeter daemon) |
+| `tuigreet` | TUI greeter; lists sessions from `/usr/share/wayland-sessions` |
+
+The session **must** be started with `niri-session` (the `niri.desktop` entry),
+not by running `niri` directly. `niri-session` runs niri as a systemd user
+service, which activates `graphical-session.target` and lets
+`xdg-desktop-portal` and its backends start (required by flatpaks).
+
 ## Portals / keyring (required by niri)
 
 | Package | Notes |
 | --- | --- |
-| `gnome-keyring` | Secret portal |
+| `gnome-keyring` | Secret portal; D-Bus/systemd activated (`org.freedesktop.secrets`) |
 | `xdg-desktop-portal-gtk` | File chooser / fallback |
 | `xdg-desktop-portal-gnome` | Screencast / screenshots |
+
+`gnome-keyring` is **not** launched from the niri autostart: it is activated on
+demand via D-Bus/systemd. Enable its user unit with
+`systemctl --user enable gnome-keyring-daemon.service`.
 
 ## Shell UI
 
@@ -126,7 +143,7 @@ If `install.sh` reports these in `failed-packages.txt`, install them manually:
 - `pywal` (`wal`) → `pip install pywal` or COPR
 - `swayosd` → COPR
 - `awww` → COPR / source (the dotfiles use the `awww` binary names)
-- `hypridle`, `hyprpolkitagent`, `quickshell`, `clipse` → verify availability
+- `swayidle`, `hyprpolkitagent`, `quickshell`, `clipse` → verify availability
   for your Fedora release; otherwise COPR.
 
 ## Not included (install manually if you want them)

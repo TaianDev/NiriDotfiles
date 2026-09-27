@@ -1,4 +1,5 @@
 module components
+AppText 1.0 AppText.qml
 SvgIcon 1.0 SvgIcon.qml
 ScrollingText 1.0 ScrollingText.qml
 PillBase 1.0 PillBase.qml

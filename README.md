@@ -10,7 +10,7 @@ pywal dynamic theming, and a wlogout power menu.
 | --- | --- |
 | Compositor | `niri` |
 | Shell | `quickshell` (bar, launcher, notifications, network, music, lockscreen) |
-| Idle/lock | `hypridle` + Quickshell lockscreen |
+| Idle/lock | `swayidle` + Quickshell lockscreen |
 | Theming | `matugen` (primary) + `pywal`/`wal` (kitty) |
 | Wallpaper | `awww` |
 | Power menu | `wlogout` |
@@ -68,9 +68,24 @@ stow --no-folding niri quickshell wlogout matugen kitty gtk-3.0 gtk-4.0 \
 - `zsh` → `~/.zshrc`
 - `wallpapers` → `~/Pictures/Wallpapers`
 
+## Session
+
+The session is started by **greetd** (with `tuigreet`) → **`niri-session`**, not
+by running `niri` directly. `niri-session` runs niri as a systemd user service,
+which activates `graphical-session.target`; that is what lets
+`xdg-desktop-portal` (and therefore flatpaks) work.
+
+This requires `greetd` enabled as the display manager and the default systemd
+target set to `graphical.target`:
+
+```bash
+sudo systemctl enable greetd
+sudo systemctl set-default graphical.target
+```
+
 ## Theming
 
-- **matugen** generates: `quickshell/Theme.qml`, `wlogout/colors.css`,
+- **matugen** generates: `~/.local/state/quickshell/Theme.qml`, `wlogout/colors.css`,
   `gtk-3.0/gtk.css`, `gtk-4.0/gtk.css`, `niri/colors.kdl`, `swayosd/style.css`.
 - **pywal** generates kitty colors (`~/.cache/wal/colors-kitty.conf`), which
   `kitty.conf` includes. Both generators run together in
@@ -90,8 +105,8 @@ Locking always goes through a single helper:
 ~/.config/quickshell/scripts/session-lock.sh
 ```
 
-It is used by the niri keybind (`Super+L`), `wlogout`, `hypridle` and the
-Quickshell `SessionService`.
+It is used by the niri keybind (`Super+L`), `wlogout`, `swayidle` (via
+`niri/.config/niri/scripts/idle.sh`) and the Quickshell `SessionService`.
 
 ## Key bindings (selected)
 

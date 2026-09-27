@@ -14,6 +14,13 @@ Item {
     property string iconsPath: Qt.resolvedUrl("../../assets/icons/")
     property var widgetRef: null
 
+    // Field that the bar can forward key events to if the layer surface
+    // receives keyboard focus instead of the popup (see Bar.qml).
+    readonly property Item activeInput: titleField.activeFocus ? titleField
+        : bodyArea.activeFocus ? bodyArea
+        : tagField.activeFocus ? tagField
+        : titleField
+
     property bool editorOpen: false
     property string editingId: ""
     property string targetStatus: "todo"
@@ -223,7 +230,7 @@ Item {
                             Layout.fillWidth: true
                             spacing: 6
 
-                            Text {
+                            AppText {
                                 text: modelData.name
                                 color: root.textMain
                                 font.pixelSize: 13
@@ -236,7 +243,7 @@ Item {
                                 radius: 9
                                 color: Theme.alpha(Theme.primary, 0.18)
 
-                                Text {
+                                AppText {
                                     anchors.centerIn: parent
                                     text: root.countFor(modelData.key)
                                     color: Theme.inkPrimCont
@@ -254,7 +261,7 @@ Item {
                                 color: addArea.containsMouse ? Theme.alpha(Theme.primary, 0.28) : "transparent"
                                 Behavior on color { ColorAnimation { duration: 100 } }
 
-                                Text {
+                                AppText {
                                     anchors.centerIn: parent
                                     text: "+"
                                     color: root.textMain
@@ -341,7 +348,7 @@ Item {
                                                 Layout.fillWidth: true
                                                 spacing: 1
 
-                                                Text {
+                                                AppText {
                                                     Layout.fillWidth: true
                                                     text: (modelData.title ?? "") === ""
                                                         ? "(no title)"
@@ -352,7 +359,7 @@ Item {
                                                     font.bold: true
                                                 }
 
-                                                Text {
+                                                AppText {
                                                     Layout.fillWidth: true
                                                     text: root.formatStamp(modelData)
                                                     color: root.textMuted
@@ -391,7 +398,7 @@ Item {
                                                         clip: true
                                                         color: modelData.color
 
-                                                        Text {
+                                                        AppText {
                                                             id: chipTx
                                                             anchors.centerIn: parent
                                                             text: modelData.label
@@ -506,7 +513,7 @@ Item {
                                             }
                                         }
 
-                                        Text {
+                                        AppText {
                                             id: bodyText
                                             Layout.fillWidth: true
                                             visible: expanded && hasBody
@@ -534,7 +541,7 @@ Item {
                                     tint: Theme.alpha(Theme.inkSurfVar, 0.5)
                                 }
 
-                                Text {
+                                AppText {
                                     text: "Empty"
                                     color: root.textMuted
                                     font.pixelSize: 12
@@ -563,7 +570,7 @@ Item {
                 Layout.fillWidth: true
                 spacing: 8
 
-                Text {
+                AppText {
                     Layout.fillWidth: true
                     text: editingId === ""
                         ? "New note · " + root.statusName(targetStatus)
@@ -581,7 +588,7 @@ Item {
                     color: closeArea.containsMouse ? Theme.alpha(Theme.inkSurf, 0.15) : "transparent"
                     Behavior on color { ColorAnimation { duration: 100 } }
 
-                    Text {
+                    AppText {
                         anchors.centerIn: parent
                         text: "✕"
                         color: root.textMuted
@@ -611,6 +618,7 @@ Item {
 
                     TextField {
                         id: titleField
+                        font.family: Theme.fontFamily
                         Layout.fillWidth: true
                         Layout.preferredHeight: 42
                         placeholderText: "Title"
@@ -688,7 +696,7 @@ Item {
                         anchors.margins: 12
                         spacing: 10
 
-                        Text {
+                        AppText {
                             Layout.fillWidth: true
                             text: "Importance"
                             color: root.textMuted
@@ -713,7 +721,7 @@ Item {
                                         : Theme.alpha(Theme.inkSurf, 0.08)
                                     Behavior on color { ColorAnimation { duration: 100 } }
 
-                                    Text {
+                                    AppText {
                                         anchors.centerIn: parent
                                         text: root.impLabel(modelData)
                                         color: root.eImportance === modelData ? Theme.background : root.textMuted
@@ -739,7 +747,7 @@ Item {
                                     : "transparent"
                                 Behavior on color { ColorAnimation { duration: 100 } }
 
-                                Text {
+                                AppText {
                                     anchors.centerIn: parent
                                     text: "None"
                                     color: root.eImportance === "none" ? root.textMain : root.textMuted
@@ -756,7 +764,7 @@ Item {
                             }
                         }
 
-                        Text {
+                        AppText {
                             Layout.fillWidth: true
                             text: "Difficulty"
                             color: root.textMuted
@@ -781,7 +789,7 @@ Item {
                                         : Theme.alpha(Theme.inkSurf, 0.08)
                                     Behavior on color { ColorAnimation { duration: 100 } }
 
-                                    Text {
+                                    AppText {
                                         anchors.centerIn: parent
                                         text: root.diffLabel(modelData)
                                         color: root.eDifficulty === modelData ? Theme.background : root.textMuted
@@ -807,7 +815,7 @@ Item {
                                     : "transparent"
                                 Behavior on color { ColorAnimation { duration: 100 } }
 
-                                Text {
+                                AppText {
                                     anchors.centerIn: parent
                                     text: "None"
                                     color: root.eDifficulty === "none" ? root.textMain : root.textMuted
@@ -834,7 +842,7 @@ Item {
                             Layout.fillWidth: true
                             spacing: 4
 
-                            Text {
+                            AppText {
                                 Layout.fillWidth: true
                                 text: "Tags"
                                 color: root.textMuted
@@ -842,7 +850,7 @@ Item {
                                 font.bold: true
                             }
 
-                            Text {
+                            AppText {
                                 text: eTags.length + "/" + NotesService.tagMax
                                 color: root.textMuted
                                 font.pixelSize: 10
@@ -878,7 +886,7 @@ Item {
                                         anchors.centerIn: parent
                                         spacing: 4
 
-                                        Text {
+                                        AppText {
                                             text: modelData.name
                                             color: Theme.background
                                             font.pixelSize: 10
@@ -889,7 +897,7 @@ Item {
                                             Layout.preferredWidth: 14
                                             Layout.preferredHeight: 14
 
-                                            Text {
+                                            AppText {
                                                 anchors.centerIn: parent
                                                 text: "✕"
                                                 color: Theme.background
@@ -915,6 +923,7 @@ Item {
 
                             TextField {
                                 id: tagField
+                                font.family: Theme.fontFamily
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 30
                                 placeholderText: "New tag"
@@ -954,7 +963,7 @@ Item {
                                 opacity: root.eTags.length >= NotesService.tagMax ? 0.4 : 1
                                 Behavior on color { ColorAnimation { duration: 120 } }
 
-                                Text {
+                                AppText {
                                     anchors.centerIn: parent
                                     text: "Add"
                                     color: Theme.inkPrim
@@ -1008,7 +1017,7 @@ Item {
                             visible: root.usableExistingTags.length > 0
                         }
 
-                        Text {
+                        AppText {
                             Layout.fillWidth: true
                             text: "Used"
                             color: root.textMuted
@@ -1041,7 +1050,7 @@ Item {
                                     radius: 11
                                     color: modelData.color
 
-                                    Text {
+                                    AppText {
                                         id: usedTxt
                                         anchors.centerIn: parent
                                         text: modelData.name
@@ -1078,7 +1087,7 @@ Item {
                     color: saveArea.containsMouse ? Qt.lighter(Theme.primary, 1.1) : Theme.primary
                     Behavior on color { ColorAnimation { duration: 120 } }
 
-                    Text {
+                    AppText {
                         anchors.centerIn: parent
                         text: "Save"
                         color: Theme.inkPrim
@@ -1101,7 +1110,7 @@ Item {
                     color: cancelArea.containsMouse ? Theme.alpha(Theme.inkSurf, 0.15) : Theme.alpha(Theme.inkSurf, 0.08)
                     Behavior on color { ColorAnimation { duration: 120 } }
 
-                    Text {
+                    AppText {
                         anchors.centerIn: parent
                         text: "Cancel"
                         color: root.textMuted

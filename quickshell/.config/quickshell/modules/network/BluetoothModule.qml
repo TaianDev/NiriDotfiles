@@ -47,7 +47,7 @@ Item {
             color: Theme.inkSurf
         }
 
-        Text {
+        AppText {
             anchors.verticalCenter: parent.verticalCenter
             visible: !root.enabled || root.deviceName === ""
             text:    root.enabled ? "No device" : "BT Off"

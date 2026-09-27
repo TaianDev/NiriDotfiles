@@ -5,6 +5,7 @@ import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Bluetooth
+import "../../../components"
 import "../../../core"
 
 Item {
@@ -215,7 +216,7 @@ Item {
                             Layout.alignment: Qt.AlignVCenter
                             spacing: 1
 
-                            Text {
+                            AppText {
                                 text:  model.name
                                 color: model.connected ? Theme.primary : Theme.inkSurf
                                 font.pixelSize: 13
@@ -223,7 +224,7 @@ Item {
                                 elide: Text.ElideRight
                                 width: parent.width
                             }
-                            Text {
+                            AppText {
                                 visible: isConnecting || hasError || model.connected || model.paired
                                 text: isConnecting     ? (model.connected ? "Disconnecting..." : "Connecting...")
                                       : hasError       ? "Connection failed"
@@ -245,7 +246,7 @@ Item {
                             radius: 12
                             color: Qt.rgba(1, 0.2, 0.2, 0.15)
 
-                            Text {
+                            AppText {
                                 text: "Forget"
                                 color: Theme.err
                                 font.pixelSize: 11
@@ -302,7 +303,7 @@ Item {
                 }
             }
 
-            Text {
+            AppText {
                 text: "Searching..."
                 color: Theme.primary
                 font.pixelSize: 12

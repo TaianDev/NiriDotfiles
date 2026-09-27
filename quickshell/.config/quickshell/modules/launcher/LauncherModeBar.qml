@@ -15,7 +15,8 @@ Row {
     readonly property var modes: [
         { label: "Apps", icon: "apps.svg" },
         { label: "Wallpapers", icon: "image.svg" },
-        { label: "Web", icon: "globe.svg" }
+        { label: "Web", icon: "globe.svg" },
+        { label: "Clipboard", icon: "clipboard-attachment.svg" }
     ]
 
     Repeater {
@@ -46,7 +47,7 @@ Row {
                     tint: index === root.currentMode ? Theme.primary : Theme.inkSurfVar
                 }
 
-                Text {
+                AppText {
                     text: modelData.label
                     color: index === root.currentMode ? Theme.primary : Theme.inkSurfVar
                     font.pixelSize: 12

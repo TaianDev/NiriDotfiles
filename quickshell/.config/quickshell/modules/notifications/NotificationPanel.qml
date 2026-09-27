@@ -170,7 +170,7 @@ PanelWindow {
                             anchors.rightMargin: 12
                             spacing: 8
 
-                            Text {
+                            AppText {
                                 text: "Notifications"
                                 color: Theme.inkSurf
                                 font.pixelSize: 15
@@ -184,7 +184,7 @@ PanelWindow {
                                 Layout.preferredWidth: clearLabel.implicitWidth + 8
                                 Layout.preferredHeight: 28
 
-                                Text {
+                                AppText {
                                     id: clearLabel
                                     anchors.centerIn: parent
                                     text: "Clear All"
@@ -212,7 +212,7 @@ PanelWindow {
                                        ? Theme.outlineVariant
                                        : "transparent"
 
-                                Text {
+                                AppText {
                                     anchors.centerIn: parent
                                     text: "×"
                                     color: Theme.inkSurfVar
@@ -299,7 +299,7 @@ PanelWindow {
                                 opacity: 0.28
                             }
 
-                            Text {
+                            AppText {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 text: "No Notifications"
                                 color: Theme.inkSurfVar
@@ -308,7 +308,7 @@ PanelWindow {
                                 horizontalAlignment: Text.AlignHCenter
                             }
 
-                            Text {
+                            AppText {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 width: parent.width
                                 text: "New alerts will show up here"

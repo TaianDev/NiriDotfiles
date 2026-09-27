@@ -15,7 +15,9 @@ output_path = '~/.config/gtk-4.0/gtk.css'
 
 [templates.quickshell]
 input_path = '~/.config/matugen/templates/quickshell.qml'
-output_path = '~/.config/quickshell/Theme.qml'
+# Kept OUTSIDE ~/.config/quickshell: Quickshell hot-reloads the whole config when
+# any .qml inside its config dir changes, which would kill apply_wallpaper.sh mid-run.
+output_path = '~/.local/state/quickshell/Theme.qml'
 
 [templates.niri]
 input_path = '~/.config/matugen/templates/niri.kdl'

@@ -101,37 +101,6 @@ PillBase {
 
     property string defaultArtPath: Qt.resolvedUrl("../../assets/music-disc.jpg")
 
-    // ── SVG button ────────────────────────────────────────────
-    component SvgBtn: Item {
-        id: btn
-        property int    size:       24
-        property string iconPath:   ""
-        property int    iconRot:    0
-        property bool   btnEnabled: true
-        signal clicked()
-
-        width: size; height: size
-        opacity: !btnEnabled ? 0.3 : (ma.containsMouse ? 0.6 : 1.0)
-        Behavior on opacity { NumberAnimation { duration: 120 } }
-
-        Image {
-            anchors.centerIn: parent
-            width: btn.size * 0.78; height: btn.size * 0.78
-            source: btn.iconPath
-            sourceSize.width: width; sourceSize.height: height
-            fillMode: Image.PreserveAspectFit
-            rotation: btn.iconRot
-            cache: false
-            layer.enabled: true
-            layer.effect: ColorOverlay { color: "#ffffff" }
-        }
-        MouseArea {
-            id: ma; anchors.fill: parent; hoverEnabled: true
-            cursorShape: btn.btnEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-            onClicked: if (btn.btnEnabled) btn.clicked()
-        }
-    }
-
     content: RowLayout {
         id: pillRow
         spacing: 8
@@ -164,13 +133,13 @@ PillBase {
             opacity: root.player !== null ? 1 : 0.45
             Behavior on opacity { NumberAnimation { duration: 200 } }
 
-            SvgBtn {
+            MusicSvgButton {
                 size: root.buttonSize + 4
                 iconPath: root.iconsPath + "rewind.svg"
                 btnEnabled: root.player?.canGoPrevious ?? false
                 onClicked: root.player?.previous()
             }
-            SvgBtn {
+            MusicSvgButton {
                 size: root.buttonSize + 4
                 iconPath: root.playing
                     ? root.iconsPath + "pause.svg"
@@ -178,7 +147,7 @@ PillBase {
                 btnEnabled: root.player?.canTogglePlaying ?? false
                 onClicked: root.player?.togglePlaying()
             }
-            SvgBtn {
+            MusicSvgButton {
                 size: root.buttonSize + 4
                 iconPath: root.iconsPath + "rewind.svg"
                 iconRot: 180

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import "../../components"
 import "../../core"
 import "../../services"
 
@@ -204,7 +205,7 @@ Item {
                 anchors.centerIn: parent
                 spacing: 16
 
-                Text { 
+                AppText { 
                     text: "Quick start"
                     color: root.textMain
                     font.bold: true
@@ -227,7 +228,7 @@ Item {
                             color: qsMa.containsMouse ? Qt.lighter(root.bgLighter, 1.3) : root.bgLighter
                             Behavior on color { ColorAnimation { duration: 150 } }
                             
-                            Text { 
+                            AppText { 
                                 anchors.centerIn: parent
                                 text: modelData === 60 ? "1 h" : modelData + " m"
                                 color: root.textMain 
@@ -244,7 +245,7 @@ Item {
                     }
                 }
 
-                Text { 
+                AppText { 
                     text: "Set timer"
                     color: root.textMain
                     font.bold: true
@@ -275,7 +276,7 @@ Item {
                                     color: plusMa.containsMouse ? (plusMa.pressed ? Theme.alpha(Theme.inkSurf, 0.15) : Theme.alpha(Theme.inkSurf, 0.08)) : "transparent"
                                     Behavior on color { ColorAnimation { duration: 100 } }
 
-                                    Text { anchors.centerIn: parent; text: "+"; color: root.textMain; font.pixelSize: 18 }
+                                    AppText { anchors.centerIn: parent; text: "+"; color: root.textMain; font.pixelSize: 18 }
                                     
                                     Timer { id: repPlus; interval: 80; repeat: true; onTriggered: root.updateTime(index, 1) }
                                     Timer { id: delPlus; interval: 400; onTriggered: repPlus.start() }
@@ -297,7 +298,7 @@ Item {
                                     radius: 6
                                     color: "transparent"
 
-                                    Text {
+                                    AppText {
                                         id: digitText
                                         anchors.centerIn: parent
                                         text: (index === 0 ? root.h : index === 1 ? root.m : root.s).toString().padStart(2, "0")
@@ -330,7 +331,7 @@ Item {
                                     color: minusMa.containsMouse ? (minusMa.pressed ? Theme.alpha(Theme.inkSurf, 0.15) : Theme.alpha(Theme.inkSurf, 0.08)) : "transparent"
                                     Behavior on color { ColorAnimation { duration: 100 } }
 
-                                    Text { anchors.centerIn: parent; text: "-"; color: root.textMain; font.pixelSize: 18 }
+                                    AppText { anchors.centerIn: parent; text: "-"; color: root.textMain; font.pixelSize: 18 }
                                     
                                     Timer { id: repMinus; interval: 80; repeat: true; onTriggered: root.updateTime(index, -1) }
                                     Timer { id: delMinus; interval: 400; onTriggered: repMinus.start() }
@@ -360,7 +361,7 @@ Item {
                     color: empMa.containsMouse ? Theme.alpha(Theme.secondary, 0.9) : Theme.secondaryContainer
                     Behavior on color { ColorAnimation { duration: 150 } }
                     
-                    Text { 
+                    AppText { 
                         anchors.centerIn: parent
                         text: "Start"
                         color: Theme.inkSecCont
@@ -389,7 +390,7 @@ Item {
                 anchors.centerIn: parent
                 spacing: 30
                 
-                Text {
+                AppText {
                     Layout.alignment: Qt.AlignHCenter
                     text: Math.floor(root.totalSecs / 3600).toString().padStart(2, '0') + ":" + Math.floor((root.totalSecs % 3600) / 60).toString().padStart(2, '0') + ":" + (root.totalSecs % 60).toString().padStart(2, '0')
                     color: root.textMain
@@ -409,7 +410,7 @@ Item {
                         color: prMa.containsMouse ? Qt.lighter(root.bgLighter, 1.3) : root.bgLighter
                         Behavior on color { ColorAnimation { duration: 150 } }
                         
-                        Text { 
+                        AppText { 
                             anchors.centerIn: parent
                             text: root.isRunning ? "Pause" : "Resume"
                             color: Theme.inkSecCont
@@ -433,7 +434,7 @@ Item {
                         color: canMa.containsMouse ? Theme.alpha(Theme.err, 0.9) : Theme.errContainer
                         Behavior on color { ColorAnimation { duration: 150 } }
                         
-                        Text { 
+                        AppText { 
                             anchors.centerIn: parent
                             text: "Cancel"
                             color: Theme.inkSecCont

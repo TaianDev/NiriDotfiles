@@ -7,28 +7,31 @@
 // not expand variables or `~` (except at the start of the binary). Commands
 // with environment variables, pipes or `~` use `spawn-sh-at-startup`.
 
-// System & D-Bus Environment
-spawn-sh-at-startup "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+// Session services (systemd / D-Bus)
+// NOTE: when niri runs as a session (`niri-session`), niri imports the session
+// environment into systemd itself, so `dbus-update-activation-environment` is
+// no longer needed here.
 // NOTE: hyprpolkitagent is part of the Hypr ecosystem but works as a generic
 // polkit agent. Compositor-agnostic alternative: polkit-gnome / polkit-kde-agent.
-spawn-at-startup "systemctl" "--user" "start" "hyprpolkitagent"
-spawn-sh-at-startup "gnome-keyring-daemon --start"
+spawn-at-startup "/usr/libexec/mate-polkit/polkit-mate-authentication-agent-1"
+// NOTE: gnome-keyring is NOT spawned here. It is D-Bus/systemd activated
+// (`org.freedesktop.secrets` + `gnome-keyring-daemon.service`), the standard on
+// Fedora and what the flatpak Secret portal uses.
 
 // Wallpaper & Visuals
 spawn-at-startup "awww-daemon"
 // `hyprctl setcursor` moved to env.kdl (cursor {} section).
 
 // System Trays & Indicators
-spawn-at-startup "nm-applet" "--indicator"
-spawn-at-startup "blueman-applet"
+//spawn-at-startup "nm-applet" "--indicator"
+//spawn-at-startup "blueman-applet"
 // spawn-at-startup "kdeconnect-indicator"
-
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
 // Utilities & Daemons
 spawn-sh-at-startup "GSK_RENDERER=gl swayosd-server --top-margin 0.95"
-spawn-at-startup "clipse" "-listen"
 
-// Idle / lock / suspend (config adapted for niri; see hypridle.conf)
-spawn-sh-at-startup "hypridle -c ~/.config/niri/hypridle.conf"
+// Idle / lock / suspend (see scripts/idle.sh)
+spawn-at-startup "sh" "-c" "~/.config/niri/scripts/idle.sh"
 
 // Shell & Panels
 // `qs -c overview` is removed: niri's native overview is used (toggle-overview).

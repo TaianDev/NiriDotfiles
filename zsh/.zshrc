@@ -115,56 +115,58 @@ zstyle ':fzf-tab:*' switch-group '<' '>'
 # 14 = secondary.dark bright (bright cyan)
 # 15 = on_surface.dark       (white) ← main text
 
-typeset -A ZSH_HIGHLIGHT_STYLES
+#typeset -A ZSH_HIGHLIGHT_STYLES
 
 # ── Commands ─────────────────────────────────────────────────
-ZSH_HIGHLIGHT_STYLES[command]='fg=10,bold'           # bright green — most important
-ZSH_HIGHLIGHT_STYLES[builtin]='fg=10,bold'
-ZSH_HIGHLIGHT_STYLES[function]='fg=11,bold'          # bright yellow
-ZSH_HIGHLIGHT_STYLES[alias]='fg=14,bold'             # bright cyan
-ZSH_HIGHLIGHT_STYLES[hashed-command]='fg=10'
-ZSH_HIGHLIGHT_STYLES[precommand]='fg=11,underline'   # sudo/env
+#ZSH_HIGHLIGHT_STYLES[command]='fg=10,bold'           # bright green — most important
+#ZSH_HIGHLIGHT_STYLES[builtin]='fg=10,bold'
+#ZSH_HIGHLIGHT_STYLES[function]='fg=11,bold'          # bright yellow
+#ZSH_HIGHLIGHT_STYLES[alias]='fg=14,bold'             # bright cyan
+#ZSH_HIGHLIGHT_STYLES[hashed-command]='fg=10'
+#ZSH_HIGHLIGHT_STYLES[precommand]='fg=11,underline'   # sudo/env
 
 # ── Strings and arguments ────────────────────────────────────
-ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=13' # bright magenta
-ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=13'
-ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=9'    # bright accent
-ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=9'
-ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=9'
-ZSH_HIGHLIGHT_STYLES[assign]='fg=14'                 # bright cyan
+#ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=13' # bright magenta
+#ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=13'
+#ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=9'    # bright accent
+#ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=9'
+#ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=9'
+#ZSH_HIGHLIGHT_STYLES[assign]='fg=14'                 # bright cyan
 
 # ── Paths ─────────────────────────────────────────────────────
-ZSH_HIGHLIGHT_STYLES[path]='fg=15,underline'         # pure white — maximum contrast
-ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=7,underline'   # mid gray — partial/missing path
-ZSH_HIGHLIGHT_STYLES[globbing]='fg=9,bold'           # bright accent — * ? []
+#ZSH_HIGHLIGHT_STYLES[path]='fg=15,underline'         # pure white — maximum contrast
+#ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=7,underline'   # mid gray — partial/missing path
+#ZSH_HIGHLIGHT_STYLES[globbing]='fg=9,bold'           # bright accent — * ? []
 
 # ── Reserved words ────────────────────────────────────────────
-ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=11,bold'     # bright yellow — if/for/while
-ZSH_HIGHLIGHT_STYLES[commandseparator]='fg=3'        # base yellow — ; | &&
-ZSH_HIGHLIGHT_STYLES[redirection]='fg=14,bold'       # bright cyan — > >>
-ZSH_HIGHLIGHT_STYLES[named-fd]='fg=6'
+#ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=11,bold'     # bright yellow — if/for/while
+#ZSH_HIGHLIGHT_STYLES[commandseparator]='fg=3'        # base yellow — ; | &&
+#ZSH_HIGHLIGHT_STYLES[redirection]='fg=14,bold'       # bright cyan — > >>
+#ZSH_HIGHLIGHT_STYLES[named-fd]='fg=6'
 
 # ── Errors ────────────────────────────────────────────────────
-ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=1,bold'      # tertiary = error red
-ZSH_HIGHLIGHT_STYLES[comment]='fg=8,italic'          # subtle gray — # comments
+#ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=1,bold'      # tertiary = error red
+#ZSH_HIGHLIGHT_STYLES[comment]='fg=8,italic'          # subtle gray — # comments
 
 # ── Flags ─────────────────────────────────────────────────────
-ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=9'    # bright accent — -x
-ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=9'    # bright accent — --flag
+#ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=9'    # bright accent — -x
+#ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=9'    # bright accent — --flag
 
 # ─── FUNCTIONS AND ALIASES ────────────────────────────────────
 nvim() {
-    if [[ "$TERMINAL" == "kitty" || "$TERM" == "xterm-kitty" ]]; then
-        kitty @ set-spacing padding=1
-        kitty @ set-background-opacity 0.7
-        command nvim "$@"
-        kitty @ set-spacing padding=2
-        kitty @ set-background-opacity 0.5
+    if [[ -n "$KITTY_WINDOW_ID" || "$TERM" == "xterm-kitty" ]]; then
+        {
+            # Elimina todo el margen para ocupar la pantalla completa
+            kitty @ set-spacing padding=0 2>/dev/null
+            command nvim "$@"
+        } always {
+            # Restaura exactamente el 'window_padding_width' de tu kitty.conf (0 5 5 5)
+            kitty @ set-spacing padding=default 2>/dev/null
+        }
     else
         command nvim "$@"
     fi
 }
-
 # ─── PATH ─────────────────────────────────────────────────────
 typeset -U path
 path=(
@@ -181,3 +183,7 @@ eval "$(starship init zsh)"
 
 autoload -Uz compinit && compinit
 zinit cdreplay -q
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# opencode
+export PATH=/home/taian/.opencode/bin:$PATH

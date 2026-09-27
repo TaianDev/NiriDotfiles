@@ -9,6 +9,7 @@ Item {
     readonly property int modeApps: 0
     readonly property int modeWallpapers: 1
     readonly property int modeWeb: 2
+    readonly property int modeClipboard: 3
 
     property int mode: modeApps
     property string query: ""
@@ -20,6 +21,8 @@ Item {
             return modeWallpapers
         if (n === "web" || n === "search" || n === "2")
             return modeWeb
+        if (n === "clipboard" || n === "clip" || n === "3")
+            return modeClipboard
         return modeApps
     }
 
@@ -31,7 +34,7 @@ Item {
     }
 
     function cycleMode(delta) {
-        root.setMode((root.mode + delta + 3) % 3)
+        root.setMode((root.mode + delta + 4) % 4)
     }
 
     function open(m) {
@@ -51,6 +54,7 @@ Item {
 
     function close() {
         root.isOpened = false
+        root.query = ""
     }
 
     onIsOpenedChanged: {

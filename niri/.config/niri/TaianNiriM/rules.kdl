@@ -64,15 +64,6 @@ window-rule {
     open-floating true
 }
 
-// Clipse (clipboard manager)
-// Note: Hyprland `stay_focused = true` has no equivalent in niri.
-window-rule {
-    match app-id="clipse"
-    open-floating true
-    default-column-width { fixed 495; }
-    default-window-height { fixed 450; }
-}
-
 // Satty
 window-rule {
     match app-id="com.gabm.satty"
@@ -88,7 +79,7 @@ window-rule {
 // xray (default) blurs the wallpaper; use `xray false` for normal blur
 // (experimental: it disappears during animations/dragging).
 window-rule {
-    match app-id="^zen$"
+    match app-id="app.zen_browser.zen"
     background-effect { blur true; xray false; }
 }
 

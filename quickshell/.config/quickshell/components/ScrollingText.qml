@@ -16,7 +16,7 @@ Item {
 
     readonly property bool needsScroll: textItem.implicitWidth > maxWidth
 
-    Text {
+    AppText {
         id: textItem
         text:           root.text
         color:          root.color
@@ -39,7 +39,7 @@ Item {
         }
     }
 
-    Text {
+    AppText {
         visible:        root.needsScroll
         text:           root.text
         color:          root.color

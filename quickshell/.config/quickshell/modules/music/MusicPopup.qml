@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Services.Mpris
 import "../../core"
 import "../../services"
+import "../../components"
 import "../../components/shell"
 import "../../utils"
 
@@ -162,18 +163,91 @@ PopupWindow {
     onVolumeOpenChanged: Qt.callLater(reposition)
     onImplicitWidthChanged: Qt.callLater(reposition)
 
-    readonly property bool lengthValid:   (player?.length ?? 0) > 0
+    // ── Track vs. live-stream state ──
+    // A player is treated as a live stream only when it genuinely lacks length
+    // support and cannot seek, and only after the track-change settle window
+    // has elapsed. This stops the LIVE pill from flashing on transitions.
+    property var lengthCache: ({})     // playerKey -> last known length (s)
+    property var lengthPlayers: ({})   // playerKey -> length support observed
+
+    readonly property string playerKey: player?.playerName
+        ?? player?.identity ?? ""
+
+    readonly property bool hasLengthSupport: player?.lengthSupported ?? false
+    readonly property bool lengthSupportKnown: popup.hasLengthSupport
+        || popup.lengthPlayers[popup.playerKey] === true
+
+    function rememberLengthSupport() {
+        if (!popup.hasLengthSupport || popup.player === null
+                || popup.playerKey === ""
+                || popup.lengthPlayers[popup.playerKey] === true)
+            return
+        const next = Object.assign({}, popup.lengthPlayers)
+        next[popup.playerKey] = true
+        popup.lengthPlayers = next
+    }
+
+    function rememberLength() {
+        if (!popup.hasLengthSupport || popup.lengthSecs <= 0
+                || popup.player === null || popup.playerKey === ""
+                || popup.lengthCache[popup.playerKey] === popup.lengthSecs)
+            return
+        const next = Object.assign({}, popup.lengthCache)
+        next[popup.playerKey] = popup.lengthSecs
+        popup.lengthCache = next
+    }
+
+    // Keep the last known duration while metadata settles mid-transition.
+    readonly property real effectiveLengthSecs: popup.hasLengthSupport
+            && popup.lengthSecs > 0
+        ? popup.lengthSecs
+        : (popup.lengthCache[popup.playerKey] ?? popup.lengthSecs)
+
     readonly property bool positionValid: player?.positionSupported ?? false
     readonly property real positionSecs:  player?.position ?? 0
     readonly property real lengthSecs:    player?.length ?? 0
     readonly property bool seekable:      player?.canSeek ?? false
-    readonly property bool showSeekbar:   player !== null && lengthValid
-                                          && positionValid && seekable
-    readonly property real progress: (lengthValid && positionValid)
-        ? Math.min(1, positionSecs / lengthSecs) : 0
+
+    readonly property bool isLiveStream: player !== null
+        && !popup.lengthSupportKnown
+        && !(player?.canSeek ?? false)
+        && popup.transitionSettled
+
+    readonly property bool showSeekbar: player !== null
+        && !popup.isLiveStream
+        && popup.effectiveLengthSecs > 0
+        && positionValid && seekable
+
+    readonly property real progress: (popup.showSeekbar && popup.effectiveLengthSecs > 0)
+        ? Math.min(1, positionSecs / popup.effectiveLengthSecs) : 0
 
     Timer {
-        running: popup.playing && popup.visible && popup.positionValid
+        id: transitionTimer
+        interval: 800; repeat: false
+    }
+
+    readonly property bool transitionSettled: !transitionTimer.running
+
+    onHasLengthSupportChanged: popup.rememberLengthSupport()
+    onLengthSecsChanged: popup.rememberLength()
+    onPlayerChanged: {
+        popup.rememberLengthSupport()
+        popup.rememberLength()
+    }
+
+    Component.onCompleted: {
+        popup.rememberLengthSupport()
+        popup.rememberLength()
+    }
+
+    Connections {
+        target: popup.player
+        function onUniqueIdChanged() { transitionTimer.restart() }
+    }
+
+    Timer {
+        running: popup.playing && popup.visible
+            && (popup.positionValid || !popup.transitionSettled)
         interval: 250; repeat: true
         onTriggered: if (popup.player) popup.player.positionChanged()
     }
@@ -242,7 +316,7 @@ PopupWindow {
                                 }
                             }
 
-                            Text {
+                            AppText {
                                 text: "NOW PLAYING"
                                 color: Theme.inkSurfVar
                                 font.pixelSize: 10
@@ -328,7 +402,7 @@ MusicSvgButton {
                                 radius: 20
                                 color: Theme.surfaceVariant
                                 visible: popup.displayArtUrl === "" || artIn.status === Image.Error
-                                Text {
+                                AppText {
                                     anchors.centerIn: parent
                                     text: "\u266A"
                                     font.pixelSize: 48
@@ -370,7 +444,7 @@ MusicSvgButton {
                                     }
                                 }
 
-                                Text {
+                                AppText {
                                     id: titleText
                                     width: parent.width
                                     text: popup.trackTitle || "No title"
@@ -379,7 +453,7 @@ MusicSvgButton {
                                     font.weight: Font.Medium
                                     elide: Text.ElideRight
                                 }
-                                Text {
+                                AppText {
                                     id: artistText
                                     width: parent.width
                                     text: popup.artistAndAlbum
@@ -408,14 +482,14 @@ MusicSvgButton {
                             visible: popup.showSeekbar
                             progress: popup.progress
                             positionSecs: popup.positionSecs
-                            lengthSecs: popup.lengthSecs
+                            lengthSecs: popup.effectiveLengthSecs
                         }
 
                         // ── LIVE pill (for live streams) ──
                         Item {
                             width: parent.width
                             height: popup.seekH
-                            visible: !popup.showSeekbar && popup.player !== null
+                            visible: popup.isLiveStream
 
                             Rectangle {
                                 anchors.centerIn: parent
@@ -434,7 +508,7 @@ MusicSvgButton {
                                         color: Theme.err
                                         anchors.verticalCenter: parent.verticalCenter
                                     }
-                                    Text {
+                                    AppText {
                                         text: "LIVE"
                                         font.pixelSize: 9
                                         font.weight: Font.Bold

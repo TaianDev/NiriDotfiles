@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
+import "../../../components"
 
 PanelWindow {
     id: activateLinuxWindow
@@ -37,13 +38,13 @@ PanelWindow {
     ColumnLayout {
         id: content
 
-        Text {
+        AppText {
             text: "Activate Linux"
             color: "#50ffffff" // Blanco con transparencia
             font.pointSize: 22
         }
 
-        Text {
+        AppText {
             text: "Go to Settings to activate Linux"
             color: "#50ffffff"
             font.pointSize: 14

@@ -152,7 +152,7 @@ Item {
                        : Theme.alpha(Theme.surfaceVariant, 0.6)
                 Behavior on color { ColorAnimation { duration: 150 } }
 
-                Text {
+                AppText {
                     anchors.centerIn: parent
                     text: "⇄"
                     color: swapMa.containsMouse ? Theme.inkSurf : Theme.inkSurfVar
@@ -207,14 +207,14 @@ Item {
                     anchors.centerIn: parent
                     spacing: 8
 
-                    Text {
+                    AppText {
                         text: "Engine"
                         color: Theme.secondary
                         font.pixelSize: 12
                         font.weight: Font.Medium
                     }
 
-                    Text {
+                    AppText {
                         text: "|"
                         color: Theme.alpha(Theme.secondary, 0.6)
                         font.pixelSize: 14
@@ -312,7 +312,7 @@ Item {
                         tint: Theme.inkPrim
                     }
 
-                    Text {
+                    AppText {
                         id: toastLabel
                         color: Theme.inkPrim
                         font.pixelSize: 12
@@ -393,7 +393,7 @@ Item {
                         }
                     }
 
-                    Text {
+                    AppText {
                         text: "Translating…"
                         color: Theme.primary
                         font.pixelSize: 12

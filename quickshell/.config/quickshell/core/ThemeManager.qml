@@ -50,6 +50,9 @@ QtObject {
         return Qt.rgba(baseColor.r, baseColor.g, baseColor.b, opacity)
     }
 
+    // ─── TYPOGRAPHY ───
+    readonly property string fontFamily: "JetBrainsMono Nerd Font"
+
     readonly property real barPillBorderWidth: 2
 
     function barPillBorderColor() {

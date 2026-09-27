@@ -85,8 +85,9 @@ Recommended manual checks after UI changes:
 - `assets/`: icons and images.
 
 Repo notes:
-- Generated files (matugen outputs) are gitignored: `Theme.qml`, `colors.css`,
-  `gtk.css`, `niri/colors.kdl`, `swayosd/style.css`.
+- Generated files (matugen outputs) are gitignored: `colors.css`, `gtk.css`,
+  `niri/colors.kdl`, `swayosd/style.css`. `Theme.qml` is also generated but lives
+  outside the repo, at `~/.local/state/quickshell/Theme.qml`.
 - Runtime state is gitignored: `alarms.json`, `notes.json`, `launcher_usage.json`.
 - `AppPaths` resolves `$HOME` at runtime; never hardcode `/home/<user>`.
 
@@ -147,10 +148,13 @@ Sort `import ...` lines alphabetically.
 - The `Theme` singleton lives in `core/ThemeManager.qml` and exposes **flat**
   color properties (`Theme.primary`, `Theme.inkSurf`, `Theme.outline`,
   `Theme.alpha(...)`). There is no `Theme.color.*` / `Config` / `GlobalStates`.
-- `ThemeLoader` parses the matugen-generated `Theme.qml` and calls
+- `ThemeLoader` parses the matugen-generated `Theme.qml` (at
+  `~/.local/state/quickshell/Theme.qml`) and calls
   `Theme.applyFromParsed(colors)`. Keep the property names in
   `matugen/templates/quickshell.qml` in sync with `ThemeManager.applyFromParsed`
-  and `modules/lockscreen/LockTheme.qml`.
+  and `modules/lockscreen/LockTheme.qml`. Do NOT move this file back under
+  `~/.config/quickshell/`: Quickshell hot-reloads its config when a `.qml` inside
+  that directory changes, which kills `scripts/apply_wallpaper.sh` mid-run.
 - `AppPaths` is the source of truth for `$HOME`-relative paths.
 
 ### External Commands

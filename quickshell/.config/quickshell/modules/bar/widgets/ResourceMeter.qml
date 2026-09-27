@@ -1,5 +1,6 @@
 import QtQuick
 import Qt5Compat.GraphicalEffects
+import "../../../components"
 import "../../../core"
 
 Row {
@@ -67,7 +68,7 @@ Row {
         }
     }
 
-    Text {
+    AppText {
         anchors.verticalCenter: parent.verticalCenter
         text: root.value + root.suffix
         color: Theme.inkSurf

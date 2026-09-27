@@ -14,6 +14,10 @@ Item {
     property string iconsPath: Qt.resolvedUrl("../../assets/icons/")
     property var widgetRef: null
 
+    // Field that the bar can forward key events to if the layer surface
+    // receives keyboard focus instead of the popup (see Bar.qml).
+    readonly property Item activeInput: labelField
+
     property string editingId: ""
     property bool editorOpen: false
     property int eHour: 8
@@ -106,7 +110,7 @@ Item {
                 Layout.fillWidth: true
                 spacing: 8
 
-                Text {
+                AppText {
                     Layout.fillWidth: true
                     text: "Alarms"
                     color: root.textMain
@@ -125,7 +129,7 @@ Item {
                         tint: root.textMuted
                     }
 
-                    Text {
+                    AppText {
                         text: AlarmService.nextAlarm
                             ? AlarmService.nextAlarm.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
                             : ""
@@ -186,14 +190,14 @@ Item {
                                 Layout.fillWidth: true
                                 spacing: 2
 
-                                Text {
+                                AppText {
                                     text: AlarmService.formatTime(modelData)
                                     color: rowRinging ? Theme.err : root.textMain
                                     font.pixelSize: 16
                                     font.bold: true
                                 }
 
-                                Text {
+                                AppText {
                                     text: rowRinging ? "RINGING — click to dismiss"
                                          : (modelData.label ?? "") !== ""
                                              ? modelData.label
@@ -204,7 +208,7 @@ Item {
                                 }
                             }
 
-                            Text {
+                            AppText {
                                 text: root.daySummary(modelData.days ?? [true, true, true, true, true, true, true])
                                 visible: !rowRinging && (modelData.label ?? "") !== ""
                                 color: root.textMuted
@@ -281,7 +285,7 @@ Item {
                         tint: Theme.alpha(Theme.inkSurfVar, 0.6)
                     }
 
-                    Text {
+                    AppText {
                         text: "No alarms set"
                         color: root.textMuted
                         font.pixelSize: 13
@@ -299,7 +303,7 @@ Item {
             color: fabArea.containsMouse ? Qt.lighter(Theme.primary, 1.1) : Theme.primary
             Behavior on color { ColorAnimation { duration: 120 } }
 
-            Text {
+            AppText {
                 anchors.centerIn: parent
                 text: "+"
                 color: Theme.inkPrim
@@ -329,7 +333,7 @@ Item {
             anchors.fill: parent
             spacing: 12
 
-            Text {
+            AppText {
                 Layout.fillWidth: true
                 text: root.editingId === "" ? "New alarm" : "Edit alarm"
                 color: root.textMain
@@ -360,7 +364,7 @@ Item {
                                 color: upArea.containsMouse ? (upArea.pressed ? Theme.alpha(Theme.inkSurf, 0.15) : Theme.alpha(Theme.inkSurf, 0.08)) : "transparent"
                                 Behavior on color { ColorAnimation { duration: 100 } }
 
-                                Text { anchors.centerIn: parent; text: "+"; color: root.textMain; font.pixelSize: 18 }
+                                AppText { anchors.centerIn: parent; text: "+"; color: root.textMain; font.pixelSize: 18 }
 
                                 Timer { id: repUp; interval: 80; repeat: true; onTriggered: root.bumpField(modelData, 1) }
                                 Timer { id: delUp; interval: 400; onTriggered: repUp.start() }
@@ -381,7 +385,7 @@ Item {
                                 Layout.preferredHeight: 36
                                 color: "transparent"
 
-                                Text {
+                                AppText {
                                     anchors.centerIn: parent
                                     text: (modelData === "h" ? root.eHour : root.eMinute).toString().padStart(2, "0")
                                     color: root.textMain
@@ -397,7 +401,7 @@ Item {
                                 color: downArea.containsMouse ? (downArea.pressed ? Theme.alpha(Theme.inkSurf, 0.15) : Theme.alpha(Theme.inkSurf, 0.08)) : "transparent"
                                 Behavior on color { ColorAnimation { duration: 100 } }
 
-                                Text { anchors.centerIn: parent; text: "-"; color: root.textMain; font.pixelSize: 18 }
+                                AppText { anchors.centerIn: parent; text: "-"; color: root.textMain; font.pixelSize: 18 }
 
                                 Timer { id: repDown; interval: 80; repeat: true; onTriggered: root.bumpField(modelData, -1) }
                                 Timer { id: delDown; interval: 400; onTriggered: repDown.start() }
@@ -416,7 +420,7 @@ Item {
                     }
                 }
 
-                Text {
+                AppText {
                     text: ":"
                     color: root.textMain
                     font.pixelSize: 30
@@ -440,7 +444,7 @@ Item {
                             : (root.eDays[index] ? Theme.primaryContainer : Theme.alpha(Theme.inkSurf, 0.08))
                         Behavior on color { ColorAnimation { duration: 120 } }
 
-                        Text {
+                        AppText {
                             anchors.centerIn: parent
                             text: modelData
                             color: root.eDays[index] ? Theme.onPrimaryContainer : root.textMuted
@@ -464,6 +468,7 @@ Item {
 
             TextField {
                 id: labelField
+                font.family: Theme.fontFamily
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: 260
@@ -505,7 +510,7 @@ Item {
                     color: saveArea.containsMouse ? Qt.lighter(Theme.primary, 1.1) : Theme.primary
                     Behavior on color { ColorAnimation { duration: 120 } }
 
-                    Text {
+                    AppText {
                         anchors.centerIn: parent
                         text: "Save"
                         color: Theme.inkPrim
@@ -528,7 +533,7 @@ Item {
                     color: cancelArea.containsMouse ? Theme.alpha(Theme.inkSurf, 0.15) : Theme.alpha(Theme.inkSurf, 0.08)
                     Behavior on color { ColorAnimation { duration: 120 } }
 
-                    Text {
+                    AppText {
                         anchors.centerIn: parent
                         text: "Cancel"
                         color: root.textMuted

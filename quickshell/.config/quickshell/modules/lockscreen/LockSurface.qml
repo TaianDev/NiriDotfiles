@@ -62,16 +62,6 @@ Item {
                 radius: 64
             }
 
-            BubbleField {
-                anchors.fill: parent
-                palette: [
-                    alpha(Theme.primary, 0.28),
-                    alpha(Theme.secondary, 0.22),
-                    alpha(Theme.tertiary, 0.18),
-                    alpha(Theme.primary, 0.16),
-                ]
-            }
-
             Rectangle {
                 anchors.fill: parent
                 color: Qt.rgba(0, 0, 0, 0.45)
@@ -141,7 +131,7 @@ Item {
             anchors.fill: parent
 
         // ── CLOCK ──
-        Text {
+        AppText {
             id: clockText
             property var date: new Date()
 
@@ -171,7 +161,7 @@ Item {
         }
 
         // ── DATE ──
-        Text {
+        AppText {
             id: dateText
             property var date: new Date()
 
@@ -203,7 +193,7 @@ Item {
         }
 
         // ── GREETING ──
-        Text {
+        AppText {
             id: greetingText
             property var date: new Date()
 
@@ -252,6 +242,7 @@ Item {
 
                 TextField {
                     id: passwordBox
+                    font.family: Theme.fontFamily
                     implicitWidth: 300
                     padding: 14
                     focus: true
@@ -347,7 +338,7 @@ Item {
                 }
             }
 
-            Text {
+            AppText {
                 id: errorText
                 anchors {
                     horizontalCenter: parent.horizontalCenter
@@ -387,7 +378,7 @@ Item {
                     layer.effect: ColorOverlay { color: "white" }
                 }
 
-                Text {
+                AppText {
                     text: "Caps Lock is on"
                     color: "white"
                     font.pixelSize: 13
@@ -395,7 +386,7 @@ Item {
                 }
             }
 
-            Text {
+            AppText {
                 id: lockoutText
                 anchors {
                     horizontalCenter: parent.horizontalCenter

@@ -125,7 +125,7 @@ Item {
                 height: 36
                 radius: 8
                 color: prevArea.containsMouse ? Theme.alpha(Theme.inkSurf, 0.1) : "transparent"
-                Text {
+                AppText {
                     anchors.centerIn: parent
                     text: "‹"
                     color: root.textMain
@@ -161,14 +161,14 @@ Item {
                     border.color: Theme.alpha(Theme.inkSurf, 0.1)
                     border.width: 1
                 }
-                contentItem: Text {
+                contentItem: AppText {
                     text: monthCombo.displayText
                     color: root.textMain
                     font.pixelSize: 14
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                 }
-                indicator: Text {
+                indicator: AppText {
                     text: "▾"
                     color: root.textMain
                     font.pixelSize: 12
@@ -202,14 +202,14 @@ Item {
                     border.color: Theme.alpha(Theme.inkSurf, 0.1)
                     border.width: 1
                 }
-                contentItem: Text {
+                contentItem: AppText {
                     text: yearCombo.displayText
                     color: root.textMain
                     font.pixelSize: 14
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                 }
-                indicator: Text {
+                indicator: AppText {
                     text: "▾"
                     color: root.textMain
                     font.pixelSize: 12
@@ -229,7 +229,7 @@ Item {
                 height: 36
                 radius: 8
                 color: nextArea.containsMouse ? Theme.alpha(Theme.inkSurf, 0.1) : "transparent"
-                Text {
+                AppText {
                     anchors.centerIn: parent
                     text: "›"
                     color: root.textMain
@@ -272,7 +272,7 @@ Item {
             Layout.fillWidth: true
             Repeater {
                 model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
-                Text {
+                AppText {
                     Layout.fillWidth: true
                     text: modelData
                     color: root.textMuted
@@ -315,7 +315,7 @@ Item {
                     border.color: Theme.alpha(root.accentGreen, 0.55)
 
                     // Day number
-                    Text {
+                    AppText {
                         anchors.centerIn: parent
                         text: modelData.day
                         color: isToday ? root.bgDark : (isSelected ? root.accentGreen : (modelData.current ? root.textMain : root.textMuted))
@@ -374,7 +374,7 @@ Item {
                 anchors.fill: parent
                 spacing: 8
 
-                Text {
+                AppText {
                     Layout.preferredWidth: 130
                     text: root.formatShort(root.selectedDate)
                     color: root.textMain
@@ -406,14 +406,14 @@ Item {
                         height: markedDaysList.height
                         spacing: 6
 
-                        Text {
+                        AppText {
                             anchors.verticalCenter: parent.verticalCenter
                             text: model.label
                             color: root.textMain
                             font.pixelSize: 11
                         }
 
-                        Text {
+                        AppText {
                             anchors.verticalCenter: parent.verticalCenter
                             visible: index < agendaModel.count - 1
                             text: "-"
@@ -423,7 +423,7 @@ Item {
                     }
                 }
 
-                Text {
+                AppText {
                     Layout.fillWidth: true
                     visible: agendaModel.count === 0
                     text: "Double-click to mark a day"

@@ -52,7 +52,7 @@ Item {
                 layer.effect: ColorOverlay { color: alpha(Theme.onBackground, 0.7) }
             }
 
-            Text {
+            AppText {
                 id: userNameText
                 anchors.verticalCenter: parent.verticalCenter
                 text: root.userName !== "" ? root.userName : "..."
@@ -77,7 +77,7 @@ Item {
                 color: alpha(Theme.outline, 0.25)
             }
 
-            Text {
+            AppText {
                 id: uptimeLabel
                 anchors.verticalCenter: parent.verticalCenter
                 text: root.uptimeText
@@ -171,7 +171,7 @@ Item {
                             }
                         }
 
-                        Text {
+                        AppText {
                             Layout.preferredWidth: 55
                             Layout.alignment: Qt.AlignVCenter
                             text: "Battery"
@@ -180,7 +180,7 @@ Item {
                             font.weight: Font.Normal
                         }
 
-                        Text {
+                        AppText {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignVCenter
                             horizontalAlignment: Text.AlignRight
@@ -226,7 +226,7 @@ Item {
                             }
                         }
 
-                        Text {
+                        AppText {
                             Layout.preferredWidth: 55
                             Layout.alignment: Qt.AlignVCenter
                             text: "Wi-Fi"
@@ -235,7 +235,7 @@ Item {
                             font.weight: Font.Normal
                         }
 
-                        Text {
+                        AppText {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignVCenter
                             horizontalAlignment: Text.AlignRight
@@ -281,7 +281,7 @@ Item {
                             }
                         }
 
-                        Text {
+                        AppText {
                             Layout.preferredWidth: 55
                             Layout.alignment: Qt.AlignVCenter
                             text: "Bluetooth"
@@ -290,7 +290,7 @@ Item {
                             font.weight: Font.Normal
                         }
 
-                        Text {
+                        AppText {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignVCenter
                             horizontalAlignment: Text.AlignRight

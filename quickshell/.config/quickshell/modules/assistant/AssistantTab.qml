@@ -5,7 +5,7 @@ import "../../components"
 Item {
     id: root
 
-    Text {
+    AppText {
         anchors.centerIn: parent
         text: "Assistant"
         color: Theme.inkSurfVar

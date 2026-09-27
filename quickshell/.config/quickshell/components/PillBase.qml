@@ -47,19 +47,22 @@ Item {
         Behavior on color { ColorAnimation { duration: 150 } }
     }
 
-    Item {
-        id: contentItem
-        width: childrenRect.width
-        height: childrenRect.height
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-    }
-
+    // Declared below contentItem in the stacking order so interactive children
+    // (e.g. the music pill buttons) receive hover; hovering elsewhere still
+    // falls through to this area so the pill keeps its own hover feedback.
     MouseArea {
         id: hoverMa
         anchors.fill: parent
         hoverEnabled: root.hoverEffect
         acceptedButtons: Qt.NoButton
         propagateComposedEvents: true
+    }
+
+    Item {
+        id: contentItem
+        width: childrenRect.width
+        height: childrenRect.height
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
     }
 }

@@ -176,8 +176,8 @@ binds {
     Super+M { spawn-sh "~/.config/wlogout/launcher.sh"; }
     Super+Shift+M { quit; }
     Super+E { spawn "nemo"; }
-    Super+Shift+E { spawn "zen-browser"; }
-    Super+Z { spawn "kitty" "--class" "clipse" "-e" "clipse"; }
+    Super+Shift+E { spawn "flatpak" "run" "app.zen_browser.zen"; }
+    Super+Z { spawn-sh "qs ipc call launcher toggle clipboard"; }
     Super+L { spawn-sh "~/.config/quickshell/scripts/session-lock.sh"; }
 
     // ========================================================================

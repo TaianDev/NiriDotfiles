@@ -45,6 +45,16 @@ Item {
 
     readonly property string focusedOutput: focusedWorkspace?.output ?? ""
 
+    // Last known focused output. niri may report no focused workspace briefly
+    // (notably right after resuming from suspend); keeping the previous value
+    // stops date/network popups from opening on every monitor at once.
+    property string lastFocusedOutput: ""
+    onFocusedOutputChanged: {
+        if (root.focusedOutput !== "")
+            root.lastFocusedOutput = root.focusedOutput
+    }
+    readonly property string activeOutput: focusedOutput !== "" ? focusedOutput : lastFocusedOutput
+
     readonly property var focusedWindow: {
         for (let i = 0; i < windows.length; i++) {
             if (windows[i].is_focused)

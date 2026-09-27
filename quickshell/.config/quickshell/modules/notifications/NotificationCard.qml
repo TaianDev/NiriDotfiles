@@ -93,7 +93,7 @@ Item {
                         visible: card.iconSrc !== "" && status === Image.Ready
                     }
 
-                    Text {
+                    AppText {
                         anchors.centerIn: parent
                         text: (notification?.appName ?? "?").charAt(0).toUpperCase()
                         color: Theme.inkPrimCont
@@ -111,7 +111,7 @@ Item {
                         Layout.fillWidth: true
                         spacing: 6
 
-                        Text {
+                        AppText {
                             Layout.fillWidth: true
                             text: notification?.appName ?? "App"
                             color: Theme.inkSurfVar
@@ -120,7 +120,7 @@ Item {
                             elide: Text.ElideRight
                         }
 
-                        Text {
+                        AppText {
                             text: card.timeLabel
                             color: Theme.inkSurfVar
                             font.pixelSize: 10
@@ -128,7 +128,7 @@ Item {
                         }
                     }
 
-                    Text {
+                    AppText {
                         Layout.fillWidth: true
                         text: notification?.summary ?? ""
                         color: Theme.inkSurf
@@ -152,7 +152,7 @@ Item {
                     }
                     Behavior on color { ColorAnimation { duration: 140 } }
 
-                    Text {
+                    AppText {
                         anchors.centerIn: parent
                         text: "×"
                         color: Theme.inkSurfVar
@@ -169,7 +169,7 @@ Item {
                 }
             }
 
-            Text {
+            AppText {
                 Layout.fillWidth: true
                 Layout.topMargin: hasBody ? 0 : -2
                 text: card.bodyText
@@ -214,7 +214,7 @@ Item {
                         radius: 14
                         color: actionMa.containsMouse ? Theme.primaryContainer : Theme.secondaryContainer
 
-                        Text {
+                        AppText {
                             id: actionLabel
                             anchors.centerIn: parent
                             text: modelData?.text ?? ""

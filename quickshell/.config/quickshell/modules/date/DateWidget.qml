@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import Quickshell
-import Quickshell.Io
 import "../../core"
 import "../../services"
 import "../../components"
@@ -12,7 +11,8 @@ PillBase {
     id: root
     hoverEffect: true
 
-    property string tempString: "..."
+    readonly property string tempString: WeatherService.summary !== ""
+        ? WeatherService.summary : "..."
     property string iconsPath: Qt.resolvedUrl("../../assets/icons/")
     property var hostWindow: null
 
@@ -45,6 +45,22 @@ PillBase {
         (datePopup.currentTab === 3 && (datePopup.alarmTabInstance?.editorOpen ?? false))
         || (datePopup.currentTab === 4 && (datePopup.notesTabInstance?.editorOpen ?? false))
     )
+
+    // Fields to forward keys to when the bar surface owns the keyboard while a
+    // text editor is open (compositors may focus the layer surface, not the popup).
+    readonly property var textInputTargets: {
+        if (!datePopup.isOpened)
+            return []
+        if (datePopup.currentTab === 3 && (datePopup.alarmTabInstance?.editorOpen ?? false)) {
+            const alarmInput = datePopup.alarmTabInstance.activeInput
+            return alarmInput ? [alarmInput] : []
+        }
+        if (datePopup.currentTab === 4 && (datePopup.notesTabInstance?.editorOpen ?? false)) {
+            const noteInput = datePopup.notesTabInstance.activeInput
+            return noteInput ? [noteInput] : []
+        }
+        return []
+    }
 
     function handleTimerKey(event) {
         datePopup.timerTab.handleKey(event)
@@ -82,18 +98,6 @@ PillBase {
     }
 
     SystemClock { id: sysClock; precision: SystemClock.Minutes }
-
-    Process {
-        id: weatherScanner
-        command: ["bash", "-c", "curl -s 'wttr.in/Lima?format=%c%t' | tr -d '+' | sed 's/  */ /g'"]
-        stdout: StdioCollector {
-            onStreamFinished: { let temp = this.text.trim(); if (temp !== "") root.tempString = temp }
-        }
-    }
-    Timer {
-        interval: 1800000; running: true; repeat: true; triggeredOnStart: true
-        onTriggered: { weatherScanner.running = false; weatherScanner.running = true }
-    }
 
     content: Item {
         id: mainLayout
@@ -190,7 +194,7 @@ PillBase {
                 }
             }
 
-            Text {
+            AppText {
                 text: Qt.formatDateTime(sysClock.date, "HH:mm") + " \u2022 " +
                     Qt.formatDateTime(sysClock.date, "ddd, dd/MM") + " \u2022 " + root.tempString
                 color: Theme.inkSurf
@@ -219,9 +223,9 @@ PillBase {
                 }
             }
 
-            Text {
+            AppText {
                 text: TimeUtils.formatMSS(root.swElapsedMs)
-                color: Theme.inkSurf; font.pixelSize: 14; font.bold: true; font.family: "monospace"
+                color: Theme.inkSurf; font.pixelSize: 14; font.bold: true
             }
 
             Rectangle { width: 24; height: 24; radius: 6; color: Qt.rgba(1, 1, 1, 0.1)
@@ -251,9 +255,9 @@ PillBase {
                 layer.effect: ColorOverlay { color: Theme.inkSurf }
             }
 
-            Text {
+            AppText {
                 text: TimeUtils.formatHMSSecs(root.tmTotalSecs)
-                color: Theme.inkSurf; font.pixelSize: 14; font.bold: true; font.family: "monospace"
+                color: Theme.inkSurf; font.pixelSize: 14; font.bold: true
             }
 
             Rectangle { width: 24; height: 24; radius: 6; color: Qt.rgba(1, 1, 1, 0.1)
@@ -283,7 +287,7 @@ PillBase {
                 layer.effect: ColorOverlay { color: Theme.inkSurf }
             }
 
-            Text { text: "Time's up!"; color: Theme.err; font.pixelSize: 14; font.bold: true }
+            AppText { text: "Time's up!"; color: Theme.err; font.pixelSize: 14; font.bold: true }
         }
 
         MouseArea {

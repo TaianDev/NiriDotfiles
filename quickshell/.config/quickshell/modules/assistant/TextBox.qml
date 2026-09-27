@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import "../../components"
 import "../../core"
 
 Item {
@@ -38,6 +39,7 @@ Item {
 
         TextEdit {
             id: edit
+            font.family: Theme.fontFamily
             width: flick.width
             height: Math.max(flick.height, edit.contentHeight)
             padding: 12
@@ -66,7 +68,7 @@ Item {
         }
     }
 
-    Text {
+    AppText {
         visible: root.text === ""
         anchors.top: parent.top
         anchors.left: parent.left

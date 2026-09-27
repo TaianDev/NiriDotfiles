@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
+import "../../components"
 import "../../core"
 
 Item {
@@ -70,7 +71,7 @@ Item {
                 }
             }
 
-            Text {
+            AppText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: root.volumePct + "%"
                 color: Theme.inkSurfVar

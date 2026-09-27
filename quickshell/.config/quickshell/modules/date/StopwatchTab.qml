@@ -29,7 +29,7 @@ Item {
         anchors.centerIn: parent
         spacing: 30
 
-        Text {
+        AppText {
             Layout.alignment: Qt.AlignHCenter
             text: root.formatSW(root.elapsedMs)
             color: root.textMain

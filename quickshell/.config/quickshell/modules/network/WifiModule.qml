@@ -72,13 +72,13 @@ Item {
             visible: root.connected
 
             Row {
-                spacing: 8
+                spacing: 10
                 SvgIcon {
                     source: root.iconsPath + "receive.svg"
                     size: 10; tint: Theme.primary
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                Text {
+                AppText {
                     width: 38
                     text:  root.formatSpeed(root.rxSpeed)
                     color: Theme.primary
@@ -88,13 +88,13 @@ Item {
             }
 
             Row {
-                spacing: 8
+                spacing: 10
                 SvgIcon {
                     source: root.iconsPath + "transmit.svg"
                     size: 10; tint: Theme.secondary
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                Text {
+                AppText {
                     width: 38
                     text:  root.formatSpeed(root.txSpeed)
                     color: Theme.secondary

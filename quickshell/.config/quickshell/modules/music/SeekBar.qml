@@ -1,4 +1,5 @@
 import QtQuick
+import "../../components"
 import "../../utils"
 import "../../core"
 
@@ -96,14 +97,14 @@ Column {
         width: parent.width
         height: 14
 
-        Text {
+        AppText {
             anchors.left: parent.left
             text: TimeUtils.formatMMSS(root.positionSecs)
             color: Theme.inkSurfVar
             font.pixelSize: 10
         }
 
-        Text {
+        AppText {
             anchors.right: parent.right
             text: TimeUtils.formatMMSS(root.lengthSecs)
             color: Theme.inkSurfVar

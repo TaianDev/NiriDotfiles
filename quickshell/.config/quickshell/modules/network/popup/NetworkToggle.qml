@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
+import "../../../components"
 import "../../../core"
 
 Rectangle {
@@ -68,8 +69,8 @@ Rectangle {
         x: 12
         y: 34
         spacing: 2
-        Text { text: root.title; color: Theme.inkSurf; font.pixelSize: 13; font.bold: true }
-        Text {
+        AppText { text: root.title; color: Theme.inkSurf; font.pixelSize: 13; font.bold: true }
+        AppText {
             text: root.subtitle
             color: Theme.inkSurfVar
             font.pixelSize: 11
@@ -78,7 +79,7 @@ Rectangle {
         }
     }
 
-    Text {
+    AppText {
         x: root.width - width - 12
         y: 44
         text: "›"

@@ -137,7 +137,7 @@ Item {
                         visible: toast.iconSrc !== "" && status === Image.Ready
                     }
 
-                    Text {
+                    AppText {
                         anchors.centerIn: parent
                         text: (notification?.appName ?? "?").charAt(0).toUpperCase()
                         color: Theme.inkPrimCont
@@ -151,7 +151,7 @@ Item {
                     Layout.fillWidth: true
                     spacing: 1
 
-                    Text {
+                    AppText {
                         Layout.fillWidth: true
                         text: notification?.appName ?? "App"
                         color: Theme.inkSurfVar
@@ -160,7 +160,7 @@ Item {
                         elide: Text.ElideRight
                     }
 
-                    Text {
+                    AppText {
                         Layout.fillWidth: true
                         text: notification?.summary ?? ""
                         color: Theme.inkSurf
@@ -179,7 +179,7 @@ Item {
                     radius: 12
                     color: closeMa.containsMouse ? Theme.outlineVariant : "transparent"
 
-                    Text {
+                    AppText {
                         anchors.centerIn: parent
                         text: "×"
                         color: Theme.inkSurfVar
@@ -196,7 +196,7 @@ Item {
                 }
                 }
 
-                Text {
+                AppText {
                     Layout.fillWidth: true
                     text: toast.bodyText
                     color: Theme.inkSurfVar

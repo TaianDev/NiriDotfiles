@@ -26,8 +26,9 @@ PanelWindow {
     readonly property string primaryMonitorName: "HDMI-A-1"
     readonly property bool isPrimary: modelData.name === primaryMonitorName
     readonly property bool isFocused: {
-        const focused = NiriData.focusedOutput
-        return focused === "" || focused === modelData.name
+        const active = NiriData.activeOutput
+        return active !== "" ? active === modelData.name
+                             : modelData.name === flareBar.primaryMonitorName
     }
     readonly property int barHeight: 40
     readonly property int flareRadius: 20
@@ -45,9 +46,9 @@ PanelWindow {
     implicitHeight: barHeight + flareRadius + 13
     exclusiveZone: barHeight
     WlrLayershell.namespace: "flare_bar_" + modelData.name
-    WlrLayershell.keyboardFocus: dateWidget.timerKeyMode
+    WlrLayershell.keyboardFocus: (dateWidget.timerKeyMode || dateWidget.textInputMode)
         ? WlrKeyboardFocus.Exclusive
-        : (dateWidget.textInputMode ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None)
+        : WlrKeyboardFocus.None
     color: "transparent"
     mask: Region { item: mainBody }
 
@@ -59,6 +60,14 @@ PanelWindow {
         id: timerKeyHost
         focus: dateWidget.timerKeyMode
         Keys.onPressed: event => dateWidget.handleTimerKey(event)
+    }
+
+    // Bridge for text fields in the date popup: if the compositor gives the
+    // layer surface the keyboard, forward keys to the active editor field.
+    Item {
+        id: textInputHost
+        focus: dateWidget.textInputMode
+        Keys.forwardTo: dateWidget.textInputTargets
     }
 
     property color _barDarkColor: Qt.rgba(
