@@ -131,14 +131,28 @@ Item {
 
     // ── Clipboard monitoring (wl-clipboard) ──────────────────────────────
 
+    property bool watchAllowed: false
+
     Process {
         id: watcher
-        running: root.ready && root.scriptPath !== ""
         command: root.scriptPath !== "" ? ["wl-paste", "--watch", root.scriptPath] : []
         stdout: SplitParser {
             onRead: line => root.addLine(line)
         }
         onExited: restartTimer.restart()
+    }
+
+    // Mata los watchers obsoletos de ejecuciones anteriores: al reiniciar
+    // quickshell matando el proceso, los hijos `wl-paste --watch` quedan
+    // huérfanos. `pkill` nunca se señala a sí mismo, así que es seguro.
+    Process {
+        id: staleCleanup
+        command: root.scriptPath !== "" ? ["pkill", "-f", "wl-paste --watch .*clipboard-record"] : []
+        onExited: {
+            root.watchAllowed = true
+            if (root.ready && root.scriptPath !== "")
+                watcher.running = true
+        }
     }
 
     Process {
@@ -153,17 +167,24 @@ Item {
         id: restartTimer
         interval: 1500
         repeat: false
-        onTriggered: if (root.ready) watcher.running = true
+        onTriggered: {
+            if (root.ready && root.watchAllowed && root.scriptPath !== "")
+                watcher.running = true
+        }
     }
 
     onReadyChanged: {
-        if (root.ready)
+        if (root.ready) {
             seeder.running = true
+            staleCleanup.running = true
+        }
     }
 
     Component.onCompleted: {
-        if (root.ready)
+        if (root.ready) {
             seeder.running = true
+            staleCleanup.running = true
+        }
     }
 
     FileView {

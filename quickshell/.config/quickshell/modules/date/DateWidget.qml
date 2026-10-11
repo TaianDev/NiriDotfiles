@@ -39,32 +39,10 @@ PillBase {
     property bool tmRunning: false
     property bool tmEndedNotification: false
     property bool showTmControls: false
+    property bool timerFocused: false
 
-    readonly property bool timerKeyMode: datePopup.isOpened && datePopup.currentTab === 2 && !root.tmActive
-    readonly property bool textInputMode: datePopup.isOpened && (
-        (datePopup.currentTab === 3 && (datePopup.alarmTabInstance?.editorOpen ?? false))
-        || (datePopup.currentTab === 4 && (datePopup.notesTabInstance?.editorOpen ?? false))
-    )
-
-    // Fields to forward keys to when the bar surface owns the keyboard while a
-    // text editor is open (compositors may focus the layer surface, not the popup).
-    readonly property var textInputTargets: {
-        if (!datePopup.isOpened)
-            return []
-        if (datePopup.currentTab === 3 && (datePopup.alarmTabInstance?.editorOpen ?? false)) {
-            const alarmInput = datePopup.alarmTabInstance.activeInput
-            return alarmInput ? [alarmInput] : []
-        }
-        if (datePopup.currentTab === 4 && (datePopup.notesTabInstance?.editorOpen ?? false)) {
-            const noteInput = datePopup.notesTabInstance.activeInput
-            return noteInput ? [noteInput] : []
-        }
-        return []
-    }
-
-    function handleTimerKey(event) {
-        datePopup.timerTab.handleKey(event)
-    }
+    readonly property bool timerKeyMode: HubService.opened && HubService.section === 1
+        && root.timerFocused && !root.tmActive
 
     Timer {
         id: tmTimer
@@ -117,12 +95,7 @@ PillBase {
 
             onClicked: mouse => {
                 if (mouse.button === Qt.RightButton) {
-                    if (datePopup.isOpened) {
-                        datePopup.isOpened = false
-                    } else {
-                        PopupManager.openExclusive(PopupManager.dateId)
-                        Qt.callLater(() => datePopup.isOpened = true)
-                    }
+                    HubService.toggle(1, root)
                 } else {
                     if (root.tmEndedNotification) {
                         root.tmEndedNotification = false
@@ -319,13 +292,6 @@ PillBase {
     }
 
     function togglePopup() {
-        if (datePopup.isOpened) { datePopup.isOpened = false }
-        else { PopupManager.openExclusive(PopupManager.dateId); Qt.callLater(() => datePopup.isOpened = true) }
-    }
-    DatePopup {
-        id: datePopup
-        widgetRef: root
-        anchorItem: root
-        parentWindow: root.hostWindow
+        HubService.toggle(1, root)
     }
 }

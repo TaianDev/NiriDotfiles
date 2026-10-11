@@ -13,6 +13,7 @@ import "../network"
 import "../network/popup"
 import "../date"
 import "../music"
+import "../hub"
 import "../tray"
 import "../focused-window"
 
@@ -46,7 +47,7 @@ PanelWindow {
     implicitHeight: barHeight + flareRadius + 13
     exclusiveZone: barHeight
     WlrLayershell.namespace: "flare_bar_" + modelData.name
-    WlrLayershell.keyboardFocus: (dateWidget.timerKeyMode || dateWidget.textInputMode)
+    WlrLayershell.keyboardFocus: dateWidget.timerKeyMode
         ? WlrKeyboardFocus.Exclusive
         : WlrKeyboardFocus.None
     color: "transparent"
@@ -59,15 +60,7 @@ PanelWindow {
     Item {
         id: timerKeyHost
         focus: dateWidget.timerKeyMode
-        Keys.onPressed: event => dateWidget.handleTimerKey(event)
-    }
-
-    // Bridge for text fields in the date popup: if the compositor gives the
-    // layer surface the keyboard, forward keys to the active editor field.
-    Item {
-        id: textInputHost
-        focus: dateWidget.textInputMode
-        Keys.forwardTo: dateWidget.textInputTargets
+        Keys.onPressed: event => hub.handleDateTabKey(event)
     }
 
     property color _barDarkColor: Qt.rgba(
@@ -236,7 +229,7 @@ PanelWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: flareBar.sectionSpacing
 
-                // MusicSpectrumPill { }
+                // ── RIGHT EDGE ──
                 KeyboardPill { }
                 NotificationPill { }
                 AssistantPill { }
@@ -309,30 +302,17 @@ PanelWindow {
 
     Component { id: compBatteryPill; BatteryPill { } }
 
-    Connections {
-        target: PopupManager
-        function onToggleMusicRequested() {
-            if (!flareBar.isPrimary) return
-            musicPri.togglePopup()
-        }
-        function onToggleNetworkRequested() {
-            if (!flareBar.isFocused) return
-            const ref = flareBar.isPrimary ? networkPillPri : networkPillSec
-            if (ref) ref.togglePopup()
-        }
-        function onToggleDateRequested() {
-            if (!flareBar.isFocused) return
-            dateWidget.togglePopup()
-        }
+    // Menú unificado (Home / Date / Task) sobre MorphMenu.
+    HubMenu {
+        id: hub
+        hostWindow: flareBar
+        defaultAnchor: dateWidget
+        dateWidgetRef: dateWidget
     }
 
     Loader {
         active: flareBar.isPrimary
         sourceComponent: Item {
-            MusicPopup {
-                widgetRef: musicPri
-                parentWindow: flareBar
-            }
             TrayPopup {
                 widgetRef: trayWidgetPri
                 parentWindow: flareBar

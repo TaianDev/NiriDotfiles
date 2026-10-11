@@ -8,6 +8,7 @@ Item {
 
     property string iconsPath: Qt.resolvedUrl("../../../assets/icons/")
     property int iconSize: 16
+    readonly property string screenshotScript: AppPaths.homeDir + "/.config/quickshell/scripts/screenshot.sh"
 
     implicitWidth: 28
     implicitHeight: 28
@@ -26,11 +27,6 @@ Item {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            Quickshell.execDetached([
-                "bash", "-c",
-                "grim -g \"$(slurp)\" -t ppm - | satty --filename -"
-            ])
-        }
+        onClicked: Quickshell.execDetached(["bash", root.screenshotScript])
     }
 }

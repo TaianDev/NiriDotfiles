@@ -21,6 +21,7 @@ Item {
     readonly property bool airplaneMode: status.airplaneMode
     readonly property bool dndMode: status.dndMode
     readonly property bool nightMode: status.nightMode
+    readonly property bool caffeineMode: status.caffeineMode
     readonly property real sysVol: AudioService.volume
     readonly property bool sysVolMute: AudioService.muted
     readonly property real sysMic: AudioService.micVolume
@@ -105,9 +106,15 @@ Item {
                 title: "Night"
                 isToggled: root.nightMode
                 activeColor: Theme.tertiary
-                Layout.columnSpan: 2
-                Layout.fillWidth: true
                 onClicked: status.setNightMode(!root.nightMode)
+            }
+
+            SmallToggle {
+                iconSource: root.iconsPath + "coffee.svg"
+                title: "Caffeine"
+                isToggled: root.caffeineMode
+                activeColor: Theme.primary
+                onClicked: status.setCaffeineMode(!root.caffeineMode)
             }
         }
 
@@ -123,7 +130,7 @@ Item {
                 value: root.sysBright
                 iconSource: root.iconsPath + "brightness.svg"
                 activeColor: Theme.inkSurf
-                onMoved: val => NetworkStatusService.runAction("bright", val.toString())
+                onMoved: val => NetworkStatusService.setBrightness(val)
             }
 
             CustomSlider {
@@ -132,7 +139,7 @@ Item {
                 iconSource: root.iconsPath + "volume.svg"
                 activeColor: Theme.primary
                 canMute: true
-                isMuted: root.sysVolMute
+                isMuted: root.sysVolMute || root.sysVol <= 0
                 mutedIconSource: root.iconsPath + "no-volume.svg"
                 onMoved: val => AudioService.setVolume(val)
                 onToggleMuteClicked: AudioService.toggleMute()
@@ -144,7 +151,7 @@ Item {
                 iconSource: root.iconsPath + "mic.svg"
                 activeColor: Theme.err
                 canMute: true
-                isMuted: root.sysMicMute
+                isMuted: root.sysMicMute || root.sysMic <= 0
                 mutedIconSource: root.iconsPath + "no-mic.svg"
                 onMoved: val => AudioService.setMicVolume(val)
                 onToggleMuteClicked: AudioService.toggleMicMute()

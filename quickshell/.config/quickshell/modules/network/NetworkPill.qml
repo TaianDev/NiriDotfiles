@@ -36,19 +36,12 @@ PillBase {
     }
 
     function togglePopup() {
-        netPopup.toggle()
+        HubService.toggle(0, root)
     }
 
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.RightButton
-        cursorShape: Qt.PointingHandCursor
         onClicked: root.togglePopup()
-    }
-
-    NetworkPopup {
-        id: netPopup
-        hostWindow: root.hostWindow
-        anchorItem: root
     }
 }

@@ -32,19 +32,13 @@ PanelWindow {
 
     property string activeWallpaperPath: ""
     property real boxW: mode === LauncherService.modeWallpapers ? 960 : 660
-    property real boxH: mode === LauncherService.modeWallpapers ? 520
+    property real boxH: mode === LauncherService.modeWallpapers ? 540
         : mode === LauncherService.modeWeb ? 440 : 480
 
     Behavior on boxW { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
     Behavior on boxH { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
     visible: isOpened || overlay.exitRunning
-
-    BackgroundEffect.blurRegion: Region {
-        id: blurRegion
-        item: overlayBox
-        radius: 28
-    }
 
     WallpaperService { id: wallpaperService }
 
@@ -128,10 +122,10 @@ PanelWindow {
 
             Rectangle {
                 anchors.fill: parent
-                radius: 28
-                color: Theme.alpha(Theme.background, 0.85)
+                radius: 16
+                color: Theme.surface
                 border.width: 1
-                border.color: Theme.alpha(Theme.outlineVariant, 0.8)
+                border.color: Theme.outlineVariant
                 clip: true
 
                 MouseArea {
@@ -245,6 +239,7 @@ PanelWindow {
                             anchors.fill: parent
                             visible: launcher.mode === LauncherService.modeWallpapers
                             embedded: true
+                            service: wallpaperService
                             activeWallpaperPath: launcher.activeWallpaperPath
                             iconsPath: AppPaths.iconsDir
                             onWallpaperSelected: path => {

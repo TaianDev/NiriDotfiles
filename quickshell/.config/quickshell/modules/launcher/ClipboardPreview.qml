@@ -29,9 +29,9 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 12
-        color: Theme.alpha(Theme.surfaceVariant, 0.35)
+        color: Theme.surfaceVariant
         border.width: 1
-        border.color: Theme.alpha(Theme.outline, 0.25)
+        border.color: Theme.outlineVariant
         clip: true
 
         // ── Empty state ──
@@ -108,7 +108,7 @@ Item {
                 Layout.fillHeight: true
                 visible: root.isImage
                 radius: 8
-                color: Theme.alpha(Theme.surface, 0.6)
+                color: Theme.surface
                 clip: true
 
                 Image {
@@ -130,7 +130,7 @@ Item {
                 Layout.fillHeight: true
                 visible: root.isText
                 radius: 8
-                color: Theme.alpha(Theme.surface, 0.6)
+                color: Theme.surface
                 clip: true
 
                 FileView {

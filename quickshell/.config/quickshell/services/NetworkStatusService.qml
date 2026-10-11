@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell.Io
 import Quickshell.Bluetooth
+import Quickshell.Wayland
 import "../core"
 import "../utils"
 
@@ -20,6 +21,7 @@ Item {
     property bool airplaneMode: false
     property bool dndMode: false
     property bool nightMode: false
+    property bool caffeineMode: false
 
     property real sysVol: 0
     property bool sysVolMute: false
@@ -88,8 +90,47 @@ Item {
     }
 
     Timer {
-        interval: 2000; running: true; repeat: true; triggeredOnStart: true
+        interval: 2000
+        running: HubService.opened && HubService.section === 0
+        repeat: true
+        triggeredOnStart: false
         onTriggered: root.refresh()
+    }
+
+    // Poll ligero (solo SSID) para conservar el disparador de clima cuando el
+    // hub está cerrado. 1 fork de nmcli cada 30 s.
+    Process {
+        id: ssidPoll
+        command: ["bash", "-c",
+            "LC_ALL=C nmcli -t -f NAME,TYPE connection show --active 2>/dev/null " +
+            "| grep '802-11-wireless' | cut -d: -f1 | head -n1"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const ssid = this.text.trim()
+                if (ssid !== root.wifiNetwork)
+                    root.wifiNetwork = ssid
+            }
+        }
+    }
+
+    Timer {
+        interval: 30000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            if (HubService.opened) return
+            ssidPoll.running = false
+            ssidPoll.running = true
+        }
+    }
+
+    Connections {
+        target: HubService
+        function onOpenedChanged() {
+            if (HubService.opened && HubService.section === 0)
+                Qt.callLater(root.refresh)
+        }
     }
 
     Process {
@@ -179,6 +220,20 @@ Item {
         sunsetRunner.actionCmd = enabled ? ["bash", "-c", "wlsunset -t 5000 -T 6500"] : ["pkill", "wlsunset"]
         sunsetRunner.running = false
         sunsetRunner.running = true
+    }
+
+    // Caffeine: evita el apagado de pantalla / suspensión por inactividad.
+    function setCaffeineMode(enabled) { root.caffeineMode = enabled }
+
+    IdleInhibitor {
+        enabled: root.caffeineMode
+    }
+
+    // Brillo optimista: actualiza el estado al instante para que el slider no
+    // rebote al valor viejo mientras brightnessctl termina.
+    function setBrightness(percent) {
+        root.sysBright = ColorUtils.clamp(percent, 0, 100)
+        root.runAction("bright", String(root.sysBright))
     }
 
     function runAction(type, value) {

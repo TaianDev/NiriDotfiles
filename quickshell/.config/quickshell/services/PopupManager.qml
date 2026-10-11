@@ -18,9 +18,6 @@ Item {
     property string activeId: ""
 
     signal closeRequested(string id)
-    signal toggleMusicRequested()
-    signal toggleNetworkRequested()
-    signal toggleDateRequested()
 
     readonly property bool hasOpen: activeId !== ""
 
@@ -28,27 +25,6 @@ Item {
         target: "bar_popup"
         function close(): void {
             root.closeActive()
-        }
-    }
-
-    IpcHandler {
-        target: "music_popup"
-        function toggle(): void {
-            root.toggleMusicRequested()
-        }
-    }
-
-    IpcHandler {
-        target: "network_popup"
-        function toggle(): void {
-            root.toggleNetworkRequested()
-        }
-    }
-
-    IpcHandler {
-        target: "date_popup"
-        function toggle(): void {
-            root.toggleDateRequested()
         }
     }
 

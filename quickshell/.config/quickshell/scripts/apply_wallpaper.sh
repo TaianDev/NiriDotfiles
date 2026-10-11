@@ -10,6 +10,40 @@ if [ -z "$1" ]; then
 fi
 
 WALLPAPER_PATH="$1"
+shift || true
+
+# ── Defaults (same behaviour as before) ──
+SCHEME="scheme-tonal-spot" # matugen --type
+MODE="dark"                # matugen --mode (light|dark|smart)
+CONTRAST="0"               # matugen --contrast (-1..1)
+SRC_INDEX="0"              # matugen --source-color-index (0..4)
+TRANSITION="wave"          # awww --transition-type
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+  --scheme)
+    SCHEME="$2"
+    shift 2
+    ;;
+  --mode)
+    MODE="$2"
+    shift 2
+    ;;
+  --contrast)
+    CONTRAST="$2"
+    shift 2
+    ;;
+  --source-index)
+    SRC_INDEX="$2"
+    shift 2
+    ;;
+  --transition)
+    TRANSITION="$2"
+    shift 2
+    ;;
+  *) shift ;;
+  esac
+done
 
 # 0. VERIFY REQUIRED TOOLS (fail loudly instead of silently skipping them)
 for tool in wal matugen awww; do
@@ -30,7 +64,11 @@ if ! wal -q -i "$WALLPAPER_PATH"; then
   exit 1
 fi
 
-if ! matugen image "$WALLPAPER_PATH" --source-color-index 0; then
+if ! matugen image "$WALLPAPER_PATH" \
+  --source-color-index "$SRC_INDEX" \
+  --type "$SCHEME" \
+  --mode "$MODE" \
+  --contrast "$CONTRAST"; then
   echo "apply_wallpaper: 'matugen' failed for $WALLPAPER_PATH" >&2
   exit 1
 fi
@@ -41,7 +79,8 @@ sleep 0.3
 GSK_RENDERER=gl setsid -f swayosd-server --top-margin 0.95 >/dev/null 2>&1
 
 # 2. APPLY THE WALLPAPER
-awww img "$WALLPAPER_PATH" --transition-type wave --transition-fps 60 --transition-duration 2 &
+awww img "$WALLPAPER_PATH" --transition-type "$TRANSITION" \
+  --transition-fps 60 --transition-duration 1.5 &
 
 # 3. RELOAD APPLICATIONS (Theme.qml is watched by ThemeLoader; no shell restart needed)
 killall -SIGUSR1 kitty 2>/dev/null || true

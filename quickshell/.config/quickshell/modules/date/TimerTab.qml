@@ -8,8 +8,9 @@ Item {
     id: root
 
     property color textMain: Theme.inkSurf
+    property color textMuted: Theme.inkSurfVar
     property color bgLighter: Theme.surfaceVariant
-    
+
     // Connection to the global Dynamic Island state
     property var widgetRef: null
 
@@ -44,6 +45,7 @@ Item {
         activeFieldIndex = idx
         cursorPos = 2
         caretOn = true
+        if (widgetRef) widgetRef.timerFocused = true
     }
 
     function moveCursor(delta) {
@@ -103,7 +105,7 @@ Item {
         if (widgetRef.tmTotalSecs > 0) {
             widgetRef.tmActive = true
             widgetRef.tmRunning = true
-            widgetRef.togglePopup()
+            widgetRef.timerFocused = false
         }
     }
 
@@ -161,7 +163,7 @@ Item {
         widgetRef.tmTotalSecs = widgetRef.tmH * 3600 + widgetRef.tmM * 60 + widgetRef.tmS
         widgetRef.tmActive = true
         widgetRef.tmRunning = true
-        widgetRef.togglePopup()
+        widgetRef.timerFocused = false
     }
 
     function updateTime(idx, delta) {
@@ -192,7 +194,6 @@ Item {
 
     Item {
         anchors.fill: parent
-        anchors.margins: 20
 
         // ─── STATE 1: SETUP ───
         Item {
@@ -202,108 +203,114 @@ Item {
             Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.InOutQuad } }
 
             ColumnLayout {
-                anchors.centerIn: parent
-                spacing: 16
+                anchors.fill: parent
+                spacing: 6
 
-                AppText { 
+                Item { Layout.fillHeight: true }
+
+                AppText {
+                    Layout.alignment: Qt.AlignHCenter
                     text: "Quick start"
                     color: root.textMain
+                    font.pixelSize: 10
                     font.bold: true
-                    Layout.alignment: Qt.AlignHCenter 
                 }
 
+                // Quick start (chips compactos)
                 GridLayout {
-                    columns: 4
-                    columnSpacing: 8
-                    rowSpacing: 8
                     Layout.alignment: Qt.AlignHCenter
-                    
+                    columns: 4
+                    columnSpacing: 6
+                    rowSpacing: 6
+
                     Repeater {
                         model: [1, 2, 3, 5, 10, 15, 30, 60]
                         Rectangle {
-                            width: 50
-                            height: 32
-                            radius: 8
-                            
+                            width: 46
+                            height: 26
+                            radius: 7
+
                             color: qsMa.containsMouse ? Qt.lighter(root.bgLighter, 1.3) : root.bgLighter
                             Behavior on color { ColorAnimation { duration: 150 } }
-                            
-                            AppText { 
+
+                            AppText {
                                 anchors.centerIn: parent
-                                text: modelData === 60 ? "1 h" : modelData + " m"
-                                color: root.textMain 
+                                text: modelData === 60 ? "1h" : modelData + "m"
+                                color: root.textMain
+                                font.pixelSize: 11
                             }
-                            
-                            MouseArea { 
+
+                            MouseArea {
                                 id: qsMa
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: root.setQuick(modelData) 
+                                onClicked: root.setQuick(modelData)
                             }
                         }
                     }
                 }
 
-                AppText { 
+                Item { Layout.fillHeight: true }
+
+                AppText {
+                    Layout.alignment: Qt.AlignHCenter
                     text: "Set timer"
                     color: root.textMain
+                    font.pixelSize: 10
                     font.bold: true
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: 10 
                 }
 
+                // Set timer: pills H/M/S editables + Start
                 RowLayout {
                     Layout.alignment: Qt.AlignHCenter
-                    spacing: 12
-                    
+                    spacing: 6
+
                     Repeater {
                         model: 3
                         Rectangle {
-                            width: 60
-                            height: 90
-                            radius: 8
+                            width: 80
+                            height: 34
+                            radius: 9
                             color: root.bgLighter
-                            
-                            ColumnLayout {
+
+                            RowLayout {
                                 anchors.fill: parent
                                 spacing: 0
-                                
+
                                 Rectangle {
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 28
-                                    radius: 8
-                                    color: plusMa.containsMouse ? (plusMa.pressed ? Theme.alpha(Theme.inkSurf, 0.15) : Theme.alpha(Theme.inkSurf, 0.08)) : "transparent"
+                                    Layout.preferredWidth: 24
+                                    Layout.fillHeight: true
+                                    radius: 9
+                                    color: minusMa.containsMouse ? (minusMa.pressed ? Theme.alpha(Theme.inkSurf, 0.15) : Theme.alpha(Theme.inkSurf, 0.08)) : "transparent"
                                     Behavior on color { ColorAnimation { duration: 100 } }
 
-                                    AppText { anchors.centerIn: parent; text: "+"; color: root.textMain; font.pixelSize: 18 }
-                                    
-                                    Timer { id: repPlus; interval: 80; repeat: true; onTriggered: root.updateTime(index, 1) }
-                                    Timer { id: delPlus; interval: 400; onTriggered: repPlus.start() }
-                                    
+                                    AppText { anchors.centerIn: parent; text: "−"; color: root.textMain; font.pixelSize: 15 }
+
+                                    Timer { id: repMinus; interval: 80; repeat: true; onTriggered: root.updateTime(index, -1) }
+                                    Timer { id: delMinus; interval: 400; onTriggered: repMinus.start() }
+
                                     MouseArea {
-                                        id: plusMa
+                                        id: minusMa
                                         anchors.fill: parent
                                         hoverEnabled: true
                                         cursorShape: Qt.PointingHandCursor
-                                        onPressed: { root.updateTime(index, 1); delPlus.start() }
-                                        onReleased: { delPlus.stop(); repPlus.stop() }
-                                        onCanceled: { delPlus.stop(); repPlus.stop() }
+                                        onPressed: { root.updateTime(index, -1); delMinus.start() }
+                                        onReleased: { delMinus.stop(); repMinus.stop() }
+                                        onCanceled: { delMinus.stop(); repMinus.stop() }
                                     }
                                 }
-                                
-                                Rectangle {
+
+                                Item {
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 34
-                                    radius: 6
-                                    color: "transparent"
+                                    Layout.fillHeight: true
 
                                     AppText {
                                         id: digitText
                                         anchors.centerIn: parent
                                         text: (index === 0 ? root.h : index === 1 ? root.m : root.s).toString().padStart(2, "0")
                                         color: root.textMain
-                                        font.pixelSize: 28
+                                        font.pixelSize: 15
                                         font.bold: true
                                     }
 
@@ -311,7 +318,7 @@ Item {
                                         anchors.verticalCenter: parent.verticalCenter
                                         x: (parent.width - digitText.width) / 2 + root.cursorPos * (digitText.width / 2)
                                         width: 2
-                                        height: 22
+                                        height: 15
                                         radius: 1
                                         color: Theme.primary
                                         visible: index === root.activeFieldIndex && root.caretOn
@@ -323,27 +330,27 @@ Item {
                                         onClicked: root.selectField(index)
                                     }
                                 }
-                                
+
                                 Rectangle {
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 28
-                                    radius: 8
-                                    color: minusMa.containsMouse ? (minusMa.pressed ? Theme.alpha(Theme.inkSurf, 0.15) : Theme.alpha(Theme.inkSurf, 0.08)) : "transparent"
+                                    Layout.preferredWidth: 24
+                                    Layout.fillHeight: true
+                                    radius: 9
+                                    color: plusMa.containsMouse ? (plusMa.pressed ? Theme.alpha(Theme.inkSurf, 0.15) : Theme.alpha(Theme.inkSurf, 0.08)) : "transparent"
                                     Behavior on color { ColorAnimation { duration: 100 } }
 
-                                    AppText { anchors.centerIn: parent; text: "-"; color: root.textMain; font.pixelSize: 18 }
-                                    
-                                    Timer { id: repMinus; interval: 80; repeat: true; onTriggered: root.updateTime(index, -1) }
-                                    Timer { id: delMinus; interval: 400; onTriggered: repMinus.start() }
-                                    
+                                    AppText { anchors.centerIn: parent; text: "+"; color: root.textMain; font.pixelSize: 15 }
+
+                                    Timer { id: repPlus; interval: 80; repeat: true; onTriggered: root.updateTime(index, 1) }
+                                    Timer { id: delPlus; interval: 400; onTriggered: repPlus.start() }
+
                                     MouseArea {
-                                        id: minusMa
+                                        id: plusMa
                                         anchors.fill: parent
                                         hoverEnabled: true
                                         cursorShape: Qt.PointingHandCursor
-                                        onPressed: { root.updateTime(index, -1); delMinus.start() }
-                                        onReleased: { delMinus.stop(); repMinus.stop() }
-                                        onCanceled: { delMinus.stop(); repMinus.stop() }
+                                        onPressed: { root.updateTime(index, 1); delPlus.start() }
+                                        onReleased: { delPlus.stop(); repPlus.stop() }
+                                        onCanceled: { delPlus.stop(); repPlus.stop() }
                                     }
                                 }
                             }
@@ -351,24 +358,26 @@ Item {
                     }
                 }
 
+                Item { Layout.fillHeight: true }
+
                 Rectangle {
                     Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: 10
-                    width: 120
-                    height: 40
-                    radius: 20
-                    
+                    width: 76
+                    height: 30
+                    radius: 15
+
                     color: empMa.containsMouse ? Theme.alpha(Theme.secondary, 0.9) : Theme.secondaryContainer
                     Behavior on color { ColorAnimation { duration: 150 } }
-                    
-                    AppText { 
+
+                    AppText {
                         anchors.centerIn: parent
                         text: "Start"
                         color: Theme.inkSecCont
-                        font.bold: true 
+                        font.bold: true
+                        font.pixelSize: 12
                     }
-                    
-                    MouseArea { 
+
+                    MouseArea {
                         id: empMa
                         anchors.fill: parent
                         hoverEnabled: true
@@ -376,10 +385,12 @@ Item {
                         onClicked: root.startTimer()
                     }
                 }
+
+                Item { Layout.fillHeight: true }
             }
         }
 
-        // ─── ESTADO 2: CUENTA REGRESIVA ───
+        // ─── STATE 2: CUENTA REGRESIVA ───
         Item {
             anchors.fill: parent
             opacity: root.isActive ? 1 : 0
@@ -388,72 +399,74 @@ Item {
 
             ColumnLayout {
                 anchors.centerIn: parent
-                spacing: 30
-                
+                spacing: 14
+
                 AppText {
                     Layout.alignment: Qt.AlignHCenter
                     text: Math.floor(root.totalSecs / 3600).toString().padStart(2, '0') + ":" + Math.floor((root.totalSecs % 3600) / 60).toString().padStart(2, '0') + ":" + (root.totalSecs % 60).toString().padStart(2, '0')
                     color: root.textMain
-                    font.pixelSize: 54
+                    font.pixelSize: 34
                     font.weight: Font.Thin
                 }
-                
+
                 RowLayout {
                     Layout.alignment: Qt.AlignHCenter
-                    spacing: 16
+                    spacing: 10
 
                     Rectangle {
-                        width: 120
-                        height: 40
-                        radius: 20
-                        
+                        width: 84
+                        height: 30
+                        radius: 15
+
                         color: prMa.containsMouse ? Qt.lighter(root.bgLighter, 1.3) : root.bgLighter
                         Behavior on color { ColorAnimation { duration: 150 } }
-                        
-                        AppText { 
+
+                        AppText {
                             anchors.centerIn: parent
                             text: root.isRunning ? "Pause" : "Resume"
                             color: Theme.inkSecCont
-                            font.bold: true 
+                            font.bold: true
+                            font.pixelSize: 12
                         }
-                        
-                        MouseArea { 
+
+                        MouseArea {
                             id: prMa
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: { if (widgetRef) widgetRef.tmRunning = !widgetRef.tmRunning } 
+                            onClicked: { if (widgetRef) widgetRef.tmRunning = !widgetRef.tmRunning }
                         }
                     }
 
                     Rectangle {
-                        width: 120
-                        height: 40
-                        radius: 20
-                        
+                        width: 84
+                        height: 30
+                        radius: 15
+
                         color: canMa.containsMouse ? Theme.alpha(Theme.err, 0.9) : Theme.errContainer
                         Behavior on color { ColorAnimation { duration: 150 } }
-                        
-                        AppText { 
+
+                        AppText {
                             anchors.centerIn: parent
                             text: "Cancel"
                             color: Theme.inkSecCont
-                            font.bold: true 
+                            font.bold: true
+                            font.pixelSize: 12
                         }
-                        
+
                         MouseArea {
                             id: canMa
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: { 
+                            onClicked: {
                                 if (widgetRef) {
                                     widgetRef.tmRunning = false
-                                    widgetRef.tmActive = false 
+                                    widgetRef.tmActive = false
                                     widgetRef.tmTotalSecs = 0
                                     widgetRef.tmH = 0
                                     widgetRef.tmM = 0
-                                    widgetRef.tmS = 0 
+                                    widgetRef.tmS = 0
                                 }
                             }
                         }

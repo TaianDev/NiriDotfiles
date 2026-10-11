@@ -200,7 +200,10 @@ Item {
     // ─── ESTADO 1: TABLERO ───
     Item {
         anchors.fill: parent
-        anchors.margins: 16
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.bottomMargin: 16
+        anchors.topMargin: -4
         opacity: root.editorOpen ? 0 : 1
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }
@@ -300,7 +303,7 @@ Item {
                                         : Theme.alpha(Theme.inkSurf, 0.06)
                                     Behavior on color { ColorAnimation { duration: 120 } }
 
-                                    property bool expanded: false
+                                    property bool expanded: true
 
                                     readonly property bool hasBody: (modelData.body ?? "") !== ""
 

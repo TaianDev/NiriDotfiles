@@ -3,3 +3,5 @@ AppText 1.0 AppText.qml
 SvgIcon 1.0 SvgIcon.qml
 ScrollingText 1.0 ScrollingText.qml
 PillBase 1.0 PillBase.qml
+SectionTitle 1.0 SectionTitle.qml
+MiniComboBox 1.0 MiniComboBox.qml

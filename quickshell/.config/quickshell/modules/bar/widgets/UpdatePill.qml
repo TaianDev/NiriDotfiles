@@ -12,14 +12,6 @@ PillBase {
     property int flatpakCount: 0
     property bool checking: false
 
-    Timer {
-        interval: 60000 * 30
-        repeat: true
-        running: true
-        triggeredOnStart: true
-        onTriggered: refresh()
-    }
-
     function refresh() {
         checking = true
         dnfCheck.running = true

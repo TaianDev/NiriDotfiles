@@ -18,10 +18,10 @@ binds {
     // ========================================================================
     Super+Shift+R { spawn-sh "qs ipc call launcher toggle wallpapers"; }
     Super+R { spawn-sh "qs ipc call launcher toggle apps"; }
-    Super+Shift+W { spawn-sh "qs ipc call music_popup toggle"; }
     Super+N { spawn-sh "qs ipc call notifications_panel toggle"; }
-    Super+D { spawn-sh "qs ipc call network_popup toggle"; }
-    Super+Shift+D { spawn-sh "qs ipc call date_popup toggle"; }
+    Super+D { spawn-sh "qs ipc call hub toggle home"; }
+    Super+Shift+D { spawn-sh "qs ipc call hub toggle date"; }
+    Super+A { spawn-sh "qs ipc call hub toggle tasks"; }
     Super+T { spawn-sh "qs ipc call assistant_panel toggle"; }
     Super+Shift+T { spawn-sh "qs ipc call assistant_translate translate \"$(wl-paste --primary)\""; }
     // niri native overview (replaces `qs ipc -c overview call overview toggle`)

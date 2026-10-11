@@ -5,11 +5,11 @@ import "../../components"
 
 Item {
     id: root
-    
+
     property color textMain: Theme.inkSurf
     property color bgLighter: Theme.surfaceVariant
     property string iconsPath: widgetRef ? widgetRef.iconsPath : Qt.resolvedUrl("../../assets/icons/")
-    
+
     // 🌟 Receives the centralized reference
     property var widgetRef: null
 
@@ -25,75 +25,66 @@ Item {
         return h + ":" + m + ":" + s + "." + d
     }
 
-    ColumnLayout {
-        anchors.centerIn: parent
-        spacing: 30
+    RowLayout {
+        anchors.fill: parent
+        spacing: 8
 
         AppText {
-            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
             text: root.formatSW(root.elapsedMs)
             color: root.textMain
-            font.pixelSize: 48
+            font.pixelSize: 26
             font.weight: Font.Thin
-            style: Text.Outline
-            styleColor: Theme.alpha(Theme.inkSurf, 0.2)
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
         }
 
-        RowLayout {
-            Layout.alignment: Qt.AlignHCenter
-            spacing: 16
+        // Pause / Play
+        Rectangle {
+            Layout.alignment: Qt.AlignVCenter
+            width: 34; height: 34; radius: 17
+            color: playMa.containsMouse ? Qt.lighter(root.bgLighter, 1.4) : root.bgLighter
+            Behavior on color { ColorAnimation { duration: 150 } }
 
-            // 🌟 Pause / Play button with hover
-            Rectangle {
-                width: 48; height: 48; radius: 24
-                
-                // Hover effect: the background gray lightens
-                color: playMa.containsMouse ? Qt.lighter(root.bgLighter, 1.4) : root.bgLighter
-                Behavior on color { ColorAnimation { duration: 150 } }
-                
-                SvgIcon {
-                    anchors.centerIn: parent
-                    source: root.iconsPath + (root.running ? "pause.svg" : "play.svg")
-                    size: 20
-                    tint: root.textMain
-                }
-                
-                MouseArea {
-                    id: playMa
-                    anchors.fill: parent
-                    hoverEnabled: true // Needed to detect when the mouse hovers over it
-                    cursorShape: Qt.PointingHandCursor
-                    // Sends the command to the parent
-                    onClicked: { if (root.widgetRef) { root.widgetRef.swRunning = !root.widgetRef.swRunning; if (root.widgetRef.swRunning) root.widgetRef.togglePopup() } }
-                }
+            SvgIcon {
+                anchors.centerIn: parent
+                source: root.iconsPath + (root.running ? "pause.svg" : "play.svg")
+                size: 16
+                tint: root.textMain
             }
 
-            // 🌟 Stop button with red hover
-            Rectangle {
-                width: 48; height: 48; radius: 24
-                
-                // Hover effect: goes from gray to destructive red to indicate "Stop/Clear"
-                color: stopMa.containsMouse ? Theme.err : root.bgLighter
-                Behavior on color { ColorAnimation { duration: 150 } }
-                
-                SvgIcon {
-                    anchors.centerIn: parent
-                    source: root.iconsPath + "stop.svg"
-                    size: 20
-                    tint: root.textMain
-                }
-                
-                MouseArea {
-                    id: stopMa
-                    anchors.fill: parent
-                    hoverEnabled: true // Needed to detect when the mouse hovers over it
-                    cursorShape: Qt.PointingHandCursor
-                    // Resets the state on the parent
-                    onClicked: { 
-                        if (root.widgetRef) {
-                            root.widgetRef.swRunning = false; 
-                            root.widgetRef.swElapsedMs = 0 
-                        }
+            MouseArea {
+                id: playMa
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: { if (root.widgetRef) root.widgetRef.swRunning = !root.widgetRef.swRunning }
+            }
+        }
+
+        // Stop
+        Rectangle {
+            Layout.alignment: Qt.AlignVCenter
+            width: 34; height: 34; radius: 17
+            color: stopMa.containsMouse ? Theme.err : root.bgLighter
+            Behavior on color { ColorAnimation { duration: 150 } }
+
+            SvgIcon {
+                anchors.centerIn: parent
+                source: root.iconsPath + "stop.svg"
+                size: 16
+                tint: root.textMain
+            }
+
+            MouseArea {
+                id: stopMa
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    if (root.widgetRef) {
+                        root.widgetRef.swRunning = false
+                        root.widgetRef.swElapsedMs = 0
                     }
                 }
             }

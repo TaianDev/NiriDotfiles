@@ -1,0 +1,8 @@
+module hub
+HubMenu 1.0 HubMenu.qml
+HubTabs 1.0 HubTabs.qml
+UserStats 1.0 UserStats.qml
+PrivacyModule 1.0 PrivacyModule.qml
+HomeSection 1.0 HomeSection.qml
+DateSection 1.0 DateSection.qml
+TaskSection 1.0 TaskSection.qml

@@ -9,9 +9,12 @@ singleton NiriData 1.0 NiriData.qml
 singleton SystemMonitorService 1.0 SystemMonitorService.qml
 singleton AudioService 1.0 AudioService.qml
 singleton SessionService 1.0 SessionService.qml
-singleton AlarmService 1.0 AlarmService.qml
 singleton NotesService 1.0 NotesService.qml
 singleton LauncherService 1.0 LauncherService.qml
 singleton LauncherUsage 1.0 LauncherUsage.qml
 singleton ClipboardService 1.0 ClipboardService.qml
 singleton WeatherService 1.0 WeatherService.qml
+singleton SystemInfoService 1.0 SystemInfoService.qml
+singleton HubService 1.0 HubService.qml
+singleton MediaService 1.0 MediaService.qml
+singleton PrivacyService 1.0 PrivacyService.qml

@@ -17,16 +17,11 @@ PillBase {
     implicitHeight: capsuleHeight
     implicitWidth: pillRow.implicitWidth + 24
 
-    // ── Players ───────────────────────────────────────────────
-    property int activePlayerIndex: 0
+    // ── Players (índice activo compartido con el hub) ──
+    readonly property int activePlayerIndex: MediaService.activePlayerIndex
     property var playerList: Mpris.players.values
 
-    onPlayerListChanged: {
-        if (activePlayerIndex >= playerList.length)
-            activePlayerIndex = Math.max(0, playerList.length - 1)
-    }
-
-    readonly property var    player:      playerList.length > 0 ? playerList[activePlayerIndex] : null
+    readonly property var    player:      MediaService.activePlayer
     readonly property string trackTitle:  player?.trackTitle  ?? ""
     readonly property string trackArtist: player?.trackArtist ?? ""
     readonly property bool   playing:     player?.isPlaying   ?? false
@@ -78,12 +73,7 @@ PillBase {
     function togglePopup() {
         if (root.player === null)
             return
-        if (root.popupOpen) {
-            root.popupOpen = false
-        } else {
-            PopupManager.openExclusive(PopupManager.musicId)
-            Qt.callLater(() => root.popupOpen = true)
-        }
+        HubService.toggle(0, root)
     }
 
     onPopupOpenChanged: {
@@ -162,12 +152,7 @@ PillBase {
         onTapped: {
             if (root.player === null)
                 return
-            if (root.popupOpen) {
-                root.popupOpen = false
-            } else {
-                PopupManager.openExclusive(PopupManager.musicId)
-                Qt.callLater(() => root.popupOpen = true)
-            }
+            HubService.toggle(0, root)
         }
     }
 

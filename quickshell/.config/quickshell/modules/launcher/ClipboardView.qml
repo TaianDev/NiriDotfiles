@@ -131,7 +131,7 @@ Item {
                     height: entry.type === "image" ? 72 : 56
                     radius: 12
                     color: index === root.currentIndex
-                        ? Theme.alpha(Theme.primary, 0.18)
+                        ? Theme.secondaryContainer
                         : (rowMa.containsMouse ? Theme.alpha(Theme.inkSurf, 0.06) : "transparent")
                     Behavior on color { ColorAnimation { duration: 120 } }
 
@@ -145,7 +145,7 @@ Item {
                             Layout.preferredWidth: 48
                             Layout.preferredHeight: 48
                             radius: 8
-                            color: Theme.alpha(Theme.surfaceVariant, 0.4)
+                            color: Theme.surfaceVariant
                             clip: true
 
                             Image {

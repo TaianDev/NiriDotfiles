@@ -152,7 +152,7 @@ Item {
             height: 56
             radius: 12
             color: index === root.currentIndex
-                ? Theme.alpha(Theme.primary, 0.18)
+                ? Theme.secondaryContainer
                 : (rowMa.containsMouse ? Theme.alpha(Theme.inkSurf, 0.06) : "transparent")
             Behavior on color { ColorAnimation { duration: 120 } }
 

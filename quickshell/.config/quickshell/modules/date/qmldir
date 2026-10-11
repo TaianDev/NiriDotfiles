@@ -1,8 +1,7 @@
 module date
 DateWidget 1.0 DateWidget.qml
-DatePopup 1.0 DatePopup.qml
 CalendarTab 1.0 CalendarTab.qml
 StopwatchTab 1.0 StopwatchTab.qml
 TimerTab 1.0 TimerTab.qml
-AlarmTab 1.0 AlarmTab.qml
+WeatherCard 1.0 WeatherCard.qml
 NotesTab 1.0 NotesTab.qml

@@ -17,13 +17,9 @@ Item {
     property int dMonth: new Date().getMonth()
     property int selectedDay: new Date().getDate()
     property var daysModel: []
-    property var markedDates: []   // Almacena las fechas marcadas como "YYYY-MM-DD"
+    property var markedDates: []   // Días marcados como "YYYY-MM-DD"
 
     function daysInMonth() { return new Date(root.dYear, root.dMonth + 1, 0).getDate() }
-
-    readonly property var selectedDate: root.selectedDay > 0
-        ? new Date(root.dYear, root.dMonth, Math.min(root.selectedDay, root.daysInMonth()))
-        : new Date()
 
     function resetToToday() {
         let today = new Date()
@@ -56,17 +52,12 @@ Item {
         daysModel = temp
     }
 
-    Component.onCompleted: {
-        updateCal()
-        populateAgenda()
-    }
+    Component.onCompleted: updateCal()
 
-    // Models for the combos
     property var monthNames: [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ]
-    property var weekNames: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
     property var yearModel: {
         let arr = []
         let currentYear = new Date().getFullYear()
@@ -74,62 +65,67 @@ Item {
         return arr
     }
 
-    // Helper function to know whether a day is marked
+    function dateStr(day) {
+        return root.dYear + "-" + String(root.dMonth + 1).padStart(2, '0') + "-" + String(day).padStart(2, '0')
+    }
+
+    function isTodayDate(day, isCurrentMonth) {
+        return isCurrentMonth
+            && day === new Date().getDate()
+            && root.dMonth === new Date().getMonth()
+            && root.dYear === new Date().getFullYear()
+    }
+
     function isMarked(day, isCurrentMonth) {
         if (!isCurrentMonth) return false
-        let dateStr = dYear + "-" + String(dMonth+1).padStart(2,'0') + "-" + String(day).padStart(2,'0')
-        return markedDates.includes(dateStr)
+        return root.markedDates.includes(root.dateStr(day))
     }
 
     function isSelected(day, isCurrentMonth) {
         if (!isCurrentMonth) return false
-        if (root.selectedDay <= 0) return false
         return day === Math.min(root.selectedDay, root.daysInMonth())
     }
 
+    // Clic simple: selecciona el día (simple, sin revertir).
     function selectDay(day) {
         if (day <= 0 || day > root.daysInMonth()) return
-        root.selectedDay = (root.selectedDay === day) ? -1 : day
+        root.selectedDay = day
     }
 
+    // Doble clic: marca/desmarca con un cuadro y mantiene la selección.
+    // El día actual no se puede marcar.
     function toggleMark(day) {
         if (day <= 0 || day > root.daysInMonth()) return
-        let dateStr = root.dYear + "-" + String(root.dMonth+1).padStart(2,'0') + "-" + String(day).padStart(2,'0')
+        if (root.isTodayDate(day, true)) return
+        let ds = root.dateStr(day)
         let newMarked = root.markedDates.slice()
-        let idx = newMarked.indexOf(dateStr)
-        if (idx > -1) {
-            newMarked.splice(idx, 1)
-        } else {
-            newMarked.push(dateStr)
-        }
+        let idx = newMarked.indexOf(ds)
+        if (idx > -1) newMarked.splice(idx, 1)
+        else newMarked.push(ds)
         root.markedDates = newMarked
     }
 
-    function formatShort(d) {
-        return root.monthNames[d.getMonth()].slice(0, 3) + " " + d.getDate() + ", " + d.getFullYear()
-    }
-
     ColumnLayout {
+        id: content
         anchors.fill: parent
-        anchors.margins: 20
-        spacing: 10
+        spacing: 6
 
-        // ─── Header with selectors and "Today" button ───
+        // ─── Header: navegación + selectores + "hoy" ───
         RowLayout {
+            id: headerRow
             Layout.fillWidth: true
-            spacing: 8
+            spacing: 6
 
-            // Previous arrow (large hit area, hover)
             Rectangle {
-                width: 36
-                height: 36
-                radius: 8
+                Layout.preferredWidth: 26
+                Layout.preferredHeight: 26
+                radius: 7
                 color: prevArea.containsMouse ? Theme.alpha(Theme.inkSurf, 0.1) : "transparent"
                 AppText {
                     anchors.centerIn: parent
                     text: "‹"
                     color: root.textMain
-                    font.pixelSize: 22
+                    font.pixelSize: 16
                     font.bold: true
                 }
                 MouseArea {
@@ -141,12 +137,13 @@ Item {
                 }
             }
 
-            // Selector de mes
             ComboBox {
                 id: monthCombo
                 model: root.monthNames
                 displayText: root.monthNames[root.dMonth]
-                Layout.preferredWidth: 110
+                Layout.fillWidth: true
+                Layout.preferredWidth: 84
+                Layout.preferredHeight: 26
 
                 Component.onCompleted: currentIndex = root.dMonth
 
@@ -164,30 +161,81 @@ Item {
                 contentItem: AppText {
                     text: monthCombo.displayText
                     color: root.textMain
-                    font.pixelSize: 14
+                    font.pixelSize: 13
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                 }
                 indicator: AppText {
                     text: "▾"
                     color: root.textMain
-                    font.pixelSize: 12
+                    font.pixelSize: 11
                     anchors.right: parent.right
-                    anchors.rightMargin: 8
+                    anchors.rightMargin: 6
                     anchors.verticalCenter: parent.verticalCenter
                 }
+
+                delegate: ItemDelegate {
+                    id: monthItem
+                    width: ListView.view.width
+                    implicitHeight: 30
+                    highlighted: monthCombo.highlightedIndex === index
+                    readonly property bool selectedItem: index === monthCombo.currentIndex
+
+                    contentItem: AppText {
+                        text: modelData
+                        color: monthItem.selectedItem ? Theme.inkPrimCont
+                             : monthItem.highlighted ? Theme.primary
+                             : root.textMain
+                        font.pixelSize: 13
+                        font.bold: monthItem.selectedItem
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                    background: Rectangle {
+                        radius: 7
+                        color: monthItem.selectedItem ? Theme.primaryContainer
+                             : monthItem.highlighted ? Theme.alpha(Theme.primary, 0.14)
+                             : "transparent"
+                    }
+                }
+
+                popup: Popup {
+                    y: monthCombo.height + 4
+                    width: monthCombo.width
+                    implicitHeight: Math.min(contentItem.implicitHeight + 8, 30 * 8 + 8)
+                    padding: 4
+
+                    background: Rectangle {
+                        radius: 10
+                        color: Theme.surfaceVariant
+                        border.width: 1
+                        border.color: Theme.outlineVariant
+                    }
+                    contentItem: ListView {
+                        clip: true
+                        implicitHeight: contentHeight
+                        model: monthCombo.popup.visible ? monthCombo.delegateModel : null
+                        currentIndex: monthCombo.highlightedIndex
+                        boundsBehavior: Flickable.StopAtBounds
+                        snapMode: ListView.SnapToItem
+                        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+                    }
+                    onOpened: contentItem.positionViewAtIndex(monthCombo.highlightedIndex, ListView.Center)
+                }
+
                 onActivated: {
                     root.dMonth = index
                     root.updateCal()
                 }
             }
 
-            // Year selector
             ComboBox {
                 id: yearCombo
                 model: root.yearModel
                 displayText: root.dYear.toString()
-                Layout.preferredWidth: 80
+                Layout.fillWidth: true
+                Layout.preferredWidth: 64
+                Layout.preferredHeight: 26
 
                 Component.onCompleted: currentIndex = root.yearModel.indexOf(root.dYear)
 
@@ -205,35 +253,84 @@ Item {
                 contentItem: AppText {
                     text: yearCombo.displayText
                     color: root.textMain
-                    font.pixelSize: 14
+                    font.pixelSize: 13
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                 }
                 indicator: AppText {
                     text: "▾"
                     color: root.textMain
-                    font.pixelSize: 12
+                    font.pixelSize: 11
                     anchors.right: parent.right
-                    anchors.rightMargin: 8
+                    anchors.rightMargin: 6
                     anchors.verticalCenter: parent.verticalCenter
                 }
+
+                delegate: ItemDelegate {
+                    id: yearItem
+                    width: ListView.view.width
+                    implicitHeight: 30
+                    highlighted: yearCombo.highlightedIndex === index
+                    readonly property bool selectedItem: index === yearCombo.currentIndex
+
+                    contentItem: AppText {
+                        text: modelData
+                        color: yearItem.selectedItem ? Theme.inkPrimCont
+                             : yearItem.highlighted ? Theme.primary
+                             : root.textMain
+                        font.pixelSize: 13
+                        font.bold: yearItem.selectedItem
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                    background: Rectangle {
+                        radius: 7
+                        color: yearItem.selectedItem ? Theme.primaryContainer
+                             : yearItem.highlighted ? Theme.alpha(Theme.primary, 0.14)
+                             : "transparent"
+                    }
+                }
+
+                popup: Popup {
+                    y: yearCombo.height + 4
+                    width: yearCombo.width
+                    implicitHeight: Math.min(contentItem.implicitHeight + 8, 30 * 8 + 8)
+                    padding: 4
+
+                    background: Rectangle {
+                        radius: 10
+                        color: Theme.surfaceVariant
+                        border.width: 1
+                        border.color: Theme.outlineVariant
+                    }
+                    contentItem: ListView {
+                        clip: true
+                        implicitHeight: contentHeight
+                        model: yearCombo.popup.visible ? yearCombo.delegateModel : null
+                        currentIndex: yearCombo.highlightedIndex
+                        boundsBehavior: Flickable.StopAtBounds
+                        snapMode: ListView.SnapToItem
+                        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+                    }
+                    onOpened: contentItem.positionViewAtIndex(yearCombo.highlightedIndex, ListView.Center)
+                }
+
                 onActivated: {
                     root.dYear = root.yearModel[index]
                     root.updateCal()
                 }
             }
 
-            // Next arrow (large hit area, hover)
             Rectangle {
-                width: 36
-                height: 36
-                radius: 8
+                Layout.preferredWidth: 26
+                Layout.preferredHeight: 26
+                radius: 7
                 color: nextArea.containsMouse ? Theme.alpha(Theme.inkSurf, 0.1) : "transparent"
                 AppText {
                     anchors.centerIn: parent
                     text: "›"
                     color: root.textMain
-                    font.pixelSize: 22
+                    font.pixelSize: 16
                     font.bold: true
                 }
                 MouseArea {
@@ -245,16 +342,15 @@ Item {
                 }
             }
 
-            // "Today" button (clock icon)
             Rectangle {
-                width: 36
-                height: 36
-                radius: 8
+                Layout.preferredWidth: 26
+                Layout.preferredHeight: 26
+                radius: 7
                 color: todayArea.containsMouse ? Theme.alpha(Theme.inkSurf, 0.1) : "transparent"
                 SvgIcon {
                     anchors.centerIn: parent
                     source: root.iconsPath + "refresh.svg"
-                    size: 18
+                    size: 15
                     tint: todayArea.containsMouse ? root.textMain : root.textMuted
                 }
                 MouseArea {
@@ -267,78 +363,67 @@ Item {
             }
         }
 
-        // ─── Weekday names ───
+        // ─── Nombres de los días ───
         RowLayout {
+            id: weekdayRow
             Layout.fillWidth: true
+            Layout.preferredHeight: 16
             Repeater {
                 model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
                 AppText {
                     Layout.fillWidth: true
                     text: modelData
                     color: root.textMuted
-                    font.pixelSize: 12
+                    font.pixelSize: 11
                     horizontalAlignment: Text.AlignHCenter
                 }
             }
         }
 
-        // ─── Day grid ───
+        // ─── Grilla de días ───
         GridLayout {
             id: grid
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.preferredHeight: 157
             columns: 7
-            rowSpacing: 8
-            columnSpacing: 8
+            rowSpacing: 5
+            columnSpacing: 5
 
             Repeater {
                 model: root.daysModel
                 Rectangle {
                     id: dayCell
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    radius: 8
+                    Layout.preferredHeight: 22
+                    radius: 7
 
-                    property bool isToday: modelData.current && modelData.day === new Date().getDate() && root.dMonth === new Date().getMonth() && root.dYear === new Date().getFullYear()
+                    property bool isTodayCell: modelData.current && root.isTodayDate(modelData.day, modelData.current)
                     property bool isSelected: root.isSelected(modelData.day, modelData.current)
                     property bool isMarked: root.isMarked(modelData.day, modelData.current)
                     property bool cellHovered: false
-                    property int prevSelected: -1
 
-                    color: isToday ? root.accentGreen
-                         : isSelected ? Theme.alpha(root.accentGreen, 0.28)
+                    color: isTodayCell ? root.accentGreen
+                         : isSelected ? Theme.primaryContainer
                          : cellHovered ? Theme.alpha(Theme.inkSurf, 0.08)
                          : "transparent"
                     Behavior on color { ColorAnimation { duration: 100 } }
 
-                    border.width: isSelected && !isToday ? 1 : 0
-                    border.color: Theme.alpha(root.accentGreen, 0.55)
+                    // Cuadro selector para los días marcados (doble clic).
+                    border.width: isMarked ? 1.5 : 0
+                    border.color: root.accentGreen
 
-                    // Day number
                     AppText {
                         anchors.centerIn: parent
                         text: modelData.day
-                        color: isToday ? root.bgDark : (isSelected ? root.accentGreen : (modelData.current ? root.textMain : root.textMuted))
-                        font.pixelSize: 14
-                        font.bold: isToday || isSelected
+                        color: isTodayCell ? root.bgDark
+                             : isSelected ? Theme.inkPrimCont
+                             : (modelData.current ? root.textMain : root.textMuted)
+                        font.pixelSize: 13
+                        font.bold: isTodayCell || isSelected
                         opacity: modelData.current ? 1 : 0.5
                     }
 
-                    // Mark indicator dot
-                    Rectangle {
-                        visible: dayCell.isMarked && modelData.current
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 4
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        width: 6
-                        height: 6
-                        radius: 3
-                        color: root.accentGreen
-                    }
-
-                    // MouseArea: hover + selection (click) + double click (mark/unmark)
                     MouseArea {
-                        id: dayMouse
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
@@ -347,107 +432,14 @@ Item {
                         onEntered: dayCell.cellHovered = true
                         onExited: dayCell.cellHovered = false
 
-                        onClicked: {
-                            if (modelData.current) {
-                                dayCell.prevSelected = root.selectedDay
-                                root.selectDay(modelData.day)
-                            }
-                        }
+                        // Clic simple: selección (sin revertir).
+                        onClicked: if (modelData.current) root.selectDay(modelData.day)
 
-                        onDoubleClicked: {
-                            if (modelData.current) {
-                                root.selectedDay = dayCell.prevSelected
-                                root.toggleMark(modelData.day)
-                            }
-                        }
+                        // Doble clic: marca/desmarca y mantiene la selección.
+                        onDoubleClicked: if (modelData.current) root.toggleMark(modelData.day)
                     }
                 }
             }
         }
-
-        // ─── Strip de agenda ───
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 34
-
-            RowLayout {
-                anchors.fill: parent
-                spacing: 8
-
-                AppText {
-                    Layout.preferredWidth: 130
-                    text: root.formatShort(root.selectedDate)
-                    color: root.textMain
-                    font.pixelSize: 13
-                    font.bold: true
-                    elide: Text.ElideRight
-                }
-
-                Rectangle {
-                    implicitWidth: 4
-                    Layout.fillHeight: true
-                    radius: 2
-                    color: Theme.alpha(Theme.outline, 0.4)
-                }
-
-                ListView {
-                    id: markedDaysList
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    orientation: ListView.Horizontal
-                    spacing: 6
-                    clip: true
-                    interactive: true
-                    visible: agendaModel.count > 0
-                    model: ListModel { id: agendaModel }
-
-                    delegate: Row {
-                        width: implicitWidth
-                        height: markedDaysList.height
-                        spacing: 6
-
-                        AppText {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: model.label
-                            color: root.textMain
-                            font.pixelSize: 11
-                        }
-
-                        AppText {
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: index < agendaModel.count - 1
-                            text: "-"
-                            color: root.textMuted
-                            font.pixelSize: 11
-                        }
-                    }
-                }
-
-                AppText {
-                    Layout.fillWidth: true
-                    visible: agendaModel.count === 0
-                    text: "Double-click to mark a day"
-                    color: root.textMuted
-                    font.pixelSize: 11
-                    elide: Text.ElideRight
-                }
-            }
-        }
     }
-
-    function populateAgenda() {
-        agendaModel.clear()
-        const prefix = root.dYear + "-" + String(root.dMonth + 1).padStart(2, '0') + "-"
-        const inMonth = root.markedDates
-            .filter(s => s.indexOf(prefix) === 0)
-            .sort()
-        for (let i = 0; i < inMonth.length; i++) {
-            const d = parseInt(inMonth[i].slice(prefix.length), 10)
-            agendaModel.append({ label: root.weekNames[new Date(root.dYear, root.dMonth, d).getDay()] + " " + d })
-        }
-    }
-
-    onMarkedDatesChanged: populateAgenda()
-    onDMonthChanged: populateAgenda()
-    onDYearChanged: populateAgenda()
 }

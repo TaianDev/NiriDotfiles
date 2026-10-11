@@ -16,12 +16,61 @@ Item {
     property string activeWallpaperPath: ""
     property string iconsPath: ""
     property bool embedded: false
-    property alias searchText: gridSearch.text
+    property string searchText: ""
     property alias folderBrowserOpen: root.fbOpen
 
     property bool fbOpen: false
+    property var service: null
+
+    readonly property var schemes: [
+        { label: "Tonal Spot", value: "scheme-tonal-spot" },
+        { label: "Vibrant", value: "scheme-vibrant" },
+        { label: "Expressive", value: "scheme-expressive" },
+        { label: "Content", value: "scheme-content" },
+        { label: "Fidelity", value: "scheme-fidelity" },
+        { label: "Fruit Salad", value: "scheme-fruit-salad" },
+        { label: "Monochrome", value: "scheme-monochrome" },
+        { label: "Neutral", value: "scheme-neutral" },
+        { label: "Rainbow", value: "scheme-rainbow" },
+        { label: "Smart", value: "scheme-smart" }
+    ]
+    readonly property var modeLabels: ["Dark", "Light", "Smart"]
+    readonly property var modeValues: ["dark", "light", "smart"]
+    readonly property var transitionLabels: ["None", "Simple", "Fade", "Left", "Right", "Top",
+        "Bottom", "Wipe", "Wave", "Grow", "Center", "Any", "Outer", "Random"]
+    readonly property var transitionValues: ["none", "simple", "fade", "left", "right", "top",
+        "bottom", "wipe", "wave", "grow", "center", "any", "outer", "random"]
+
+    function schemeIndex() {
+        if (!root.service) return 0
+        for (let i = 0; i < root.schemes.length; i++)
+            if (root.schemes[i].value === root.service.scheme) return i
+        return 0
+    }
+    function modeIndex() {
+        if (!root.service) return 0
+        const i = root.modeValues.indexOf(root.service.mode)
+        return i < 0 ? 0 : i
+    }
+    function transitionIndex() {
+        if (!root.service) return 0
+        const i = root.transitionValues.indexOf(root.service.transition)
+        return i < 0 ? 0 : i
+    }
+    function regen() {
+        if (root.service && root.activeWallpaperPath !== "")
+            root.service.apply(root.activeWallpaperPath)
+        else if (root.service)
+            root.service.save()
+    }
+    function setContrast(x) {
+        if (!root.service) return
+        const t = Math.max(0, Math.min(1, x / 76))
+        root.service.contrast = Math.round((t * 2 - 1) * 100) / 100
+    }
 
     onCurrentPathChanged: wallList.currentIndex = -1
+    onSearchTextChanged: root.updateSearchFilter(searchText)
 
     function forceSearchFocus() {
         gridSearch.forceActiveFocus()
@@ -83,8 +132,11 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 24
-        spacing: 16
+        anchors.leftMargin: 14
+        anchors.rightMargin: 14
+        anchors.topMargin: 16
+        anchors.bottomMargin: 16
+        spacing: 8
 
         RowLayout {
             Layout.fillWidth: true
@@ -128,7 +180,7 @@ Item {
 
             delegate: Item {
                 id: wallDelegate
-                width: 186; height: wallList.height
+                width: 126; height: wallList.height
                 z: isSelected || itemMa.containsMouse ? 1 : 0
 
                 property string myPath: filePath
@@ -138,8 +190,8 @@ Item {
 
                 Item {
                     anchors.fill: parent
-                    anchors.topMargin: 16; anchors.bottomMargin: 16
-                    anchors.leftMargin: 8; anchors.rightMargin: 8
+                    anchors.topMargin: 10; anchors.bottomMargin: 10
+                    anchors.leftMargin: 5; anchors.rightMargin: 5
                     scale: (isSelected && !isActive) || (itemMa.containsMouse && !isActive) ? 1.04 : 1.0
                     Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
 
@@ -161,7 +213,7 @@ Item {
                             source: "file://" + wallDelegate.myPath
                             fillMode: Image.PreserveAspectCrop
                             asynchronous: true
-                            sourceSize: Qt.size(200, 400)
+                            sourceSize: Qt.size(140, 520)
                         }
 
                         Rectangle {
@@ -218,16 +270,19 @@ Item {
         }
 
         RowLayout {
-            Layout.fillWidth: true; spacing: 12
+            Layout.fillWidth: true; spacing: 6
 
+            Item { Layout.fillWidth: true }
+
+            // Folder selector
             Rectangle {
-                Layout.preferredWidth: 44; Layout.preferredHeight: 44; radius: 12
-                color: Theme.alpha(Theme.surfaceVariant, 0.6)
+                Layout.preferredWidth: 40; Layout.preferredHeight: 40; radius: 20
+                color: Theme.surfaceVariant
                 border.width: 1
-                border.color: root.fbOpen ? Theme.primary : Theme.alpha(Theme.outline, 0.35)
+                border.color: root.fbOpen ? Theme.primary : Theme.outlineVariant
                 SvgIcon {
                     anchors.centerIn: parent
-                    source: root.iconsPath + "files.svg"; size: 18
+                    source: root.iconsPath + "files.svg"; size: 17
                     tint: root.fbOpen ? Theme.primary : Theme.inkSurf
                 }
                 MouseArea {
@@ -236,52 +291,124 @@ Item {
                 }
             }
 
-            TextField {
-                id: gridSearch
-                font.family: Theme.fontFamily
-                Layout.fillWidth: true; Layout.preferredHeight: 44
-                visible: !root.embedded
-                placeholderText: "Search wallpapers..."
-                font.pixelSize: 13
-                background: Rectangle {
-                    radius: 12; color: Theme.alpha(Theme.surfaceVariant, 0.5)
-                    border.width: 1; border.color: Theme.alpha(Theme.outline, 0.3)
-                }
-                onTextChanged: root.updateSearchFilter(text)
+            // Explicit path capsule
+            Rectangle {
+                Layout.preferredWidth: Math.min(pathText.implicitWidth + 24, 200)
+                Layout.preferredHeight: 38
+                radius: 19
+                color: Theme.surfaceVariant
+                border.width: 1
+                border.color: Theme.outlineVariant
 
-                Keys.onShortcutOverride: event => {
-                    if (event.key === Qt.Key_Left || event.key === Qt.Key_Right)
-                        event.accepted = true
+                AppText {
+                    id: pathText
+                    anchors.left: parent.left; anchors.leftMargin: 12
+                    anchors.right: parent.right; anchors.rightMargin: 12
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: root.currentPath !== "" ? root.currentPath : "\u2014"
+                    color: Theme.inkSurf
+                    font.pixelSize: 10
+                    elide: Text.ElideMiddle
                 }
-                Keys.onPressed: event => {
-                    if (event.key === Qt.Key_Escape) {
-                        root.closeRequested()
-                        event.accepted = true
-                    } else if (event.key === Qt.Key_Left) {
-                        root.selectPrevious()
-                        event.accepted = true
-                    } else if (event.key === Qt.Key_Right) {
-                        root.selectNext()
-                        event.accepted = true
-                    }
-                }
-                Keys.onReturnPressed: root.applySelected()
-                Keys.onEnterPressed: root.applySelected()
             }
 
+            // Matugen scheme
+            MiniComboBox {
+                id: schemeCombo
+                displayWidth: 124
+                model: root.schemes.map(s => s.label)
+                currentIndex: root.schemeIndex()
+                onActivated: index => {
+                    if (root.service) {
+                        root.service.scheme = root.schemes[index].value
+                        root.regen()
+                    }
+                }
+            }
+
+            // Matugen mode
+            MiniComboBox {
+                id: modeCombo
+                displayWidth: 76
+                model: root.modeLabels
+                currentIndex: root.modeIndex()
+                onActivated: index => {
+                    if (root.service) {
+                        root.service.mode = root.modeValues[index]
+                        root.regen()
+                    }
+                }
+            }
+
+            // Matugen contrast
+            RowLayout {
+                spacing: 6
+                AppText { text: "Contrast"; color: Theme.inkSurfVar; font.pixelSize: 10 }
+
+                Item {
+                    Layout.preferredWidth: 76
+                    Layout.preferredHeight: 38
+
+                    Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width; height: 6; radius: 3
+                        color: Theme.alpha(Theme.inkSurf, 0.15)
+                    }
+                    Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: contrastHandle.x + contrastHandle.width / 2
+                        height: 6; radius: 3
+                        color: Theme.primary
+                    }
+                    Rectangle {
+                        id: contrastHandle
+                        x: Math.max(0, Math.min(parent.width - width,
+                            (root.service ? (root.service.contrast + 1) / 2 : 0.5) * parent.width - width / 2))
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 14; height: 14; radius: 7
+                        color: Theme.primary
+                        border.width: 2
+                        border.color: Theme.surface
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onPressed: mouse => root.setContrast(mouse.x)
+                        onPositionChanged: if (pressed) root.setContrast(mouse.x)
+                        onReleased: root.regen()
+                    }
+                }
+            }
+
+            // awww transition (incl. Random)
+            MiniComboBox {
+                id: animCombo
+                displayWidth: 104
+                model: root.transitionLabels
+                currentIndex: root.transitionIndex()
+                onActivated: index => {
+                    if (root.service) {
+                        root.service.transition = root.transitionValues[index]
+                        root.service.save()
+                    }
+                }
+            }
+
+            // Apply
             Rectangle {
-                Layout.preferredWidth: 100; Layout.preferredHeight: 44; radius: 12
-                visible: !root.embedded
+                Layout.preferredWidth: 82; Layout.preferredHeight: 38; radius: 19
                 color: Theme.primary
                 AppText {
                     anchors.centerIn: parent
-                    text: "Apply"; font.pixelSize: 14; font.bold: true; color: Theme.inkPrim
+                    text: "Apply"; font.pixelSize: 12; font.bold: true; color: Theme.inkPrim
                 }
                 MouseArea {
                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                     onClicked: root.applySelected()
                 }
             }
+
+            Item { Layout.fillWidth: true }
         }
     }
 

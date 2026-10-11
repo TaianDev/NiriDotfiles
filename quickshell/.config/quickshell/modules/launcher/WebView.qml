@@ -141,7 +141,7 @@ Item {
             height: 52
             radius: 12
             color: index === root.currentIndex
-                ? Theme.alpha(Theme.primary, 0.18)
+                ? Theme.secondaryContainer
                 : (rowMa.containsMouse ? Theme.alpha(Theme.inkSurf, 0.06) : "transparent")
             Behavior on color { ColorAnimation { duration: 120 } }
 
@@ -156,7 +156,7 @@ Item {
                     Layout.preferredHeight: 20
                     source: modelData.icon
                     size: 20
-                    tint: index === root.currentIndex ? Theme.primary : Theme.inkSurfVar
+                    tint: index === root.currentIndex ? Theme.inkSecCont : Theme.inkSurfVar
                 }
 
                 ColumnLayout {
@@ -166,7 +166,7 @@ Item {
                     AppText {
                         Layout.fillWidth: true
                         text: modelData.label
-                        color: index === root.currentIndex ? Theme.primary : Theme.inkSurf
+                        color: index === root.currentIndex ? Theme.inkSecCont : Theme.inkSurf
                         font.pixelSize: 13
                         font.bold: index === root.currentIndex
                         elide: Text.ElideRight

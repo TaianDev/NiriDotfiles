@@ -17,7 +17,7 @@ TextField {
     leftPadding: 44
     rightPadding: 16
     color: Theme.inkSurf
-    placeholderTextColor: Theme.alpha(Theme.inkSurfVar, 0.7)
+    placeholderTextColor: Theme.inkSurfVar
     font.pixelSize: 15
     activeFocusOnPress: true
 
@@ -27,15 +27,15 @@ TextField {
         anchors.verticalCenter: parent.verticalCenter
         source: root.iconSource
         size: root.iconSize
-        tint: root.activeFocus ? root.accentColor : Theme.alpha(Theme.inkSurfVar, 0.7)
+        tint: root.activeFocus ? root.accentColor : Theme.inkSurfVar
         Behavior on tint { ColorAnimation { duration: 150 } }
     }
 
     background: Rectangle {
-        radius: 14
-        color: Theme.alpha(Theme.surfaceVariant, 0.6)
+        radius: 24
+        color: Theme.surfaceVariant
         border.width: 1
-        border.color: root.activeFocus ? root.accentColor : Theme.alpha(Theme.outline, 0.35)
+        border.color: root.activeFocus ? root.accentColor : Theme.outline
         Behavior on border.color { ColorAnimation { duration: 150 } }
     }
 }

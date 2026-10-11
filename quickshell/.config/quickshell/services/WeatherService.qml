@@ -3,9 +3,9 @@ pragma Singleton
 import QtQuick
 import Quickshell.Io
 
-// WeatherService — single source of truth for the bar's weather chip.
-// Uses Open-Meteo (no API key) and maps WMO codes to Nerd Font glyphs so every
-// bar renders exactly the same icon instead of independent wttr.in emojis.
+// WeatherService — single source of truth for the bar's weather chip and the
+// Date page's weather card. Uses Open-Meteo (no API key) and maps WMO codes to
+// Nerd Font glyphs so every view renders exactly the same icon.
 Item {
     id: root
     visible: false
@@ -13,13 +13,34 @@ Item {
     // Lima, Peru
     readonly property real latitude: -12.0464
     readonly property real longitude: -77.0428
+
     readonly property string endpoint: "https://api.open-meteo.com/v1/forecast"
         + "?latitude=" + root.latitude
         + "&longitude=" + root.longitude
         + "&current=temperature_2m,weather_code"
+        + "&daily=weather_code,temperature_2m_max,temperature_2m_min"
+        + "&timezone=auto&forecast_days=5"
+
+    // Reverse geocoding without an API key, so we can show the real city name.
+    readonly property string geoEndpoint: "https://api.bigdatacloud.net/data/reverse-geocode-client"
+        + "?latitude=" + root.latitude
+        + "&longitude=" + root.longitude
+        + "&localityLanguage=en"
 
     property string glyph: ""
     property string temperature: ""
+    property string city: ""
+    property string country: ""
+    property var forecast: []   // [{ weekday, glyph, max, min }]
+
+    // "Ciudad, País" (o solo lo que haya).
+    readonly property string location: {
+        if (root.city === "")
+            return root.country
+        if (root.country === "")
+            return root.city
+        return root.city + ", " + root.country
+    }
 
     readonly property string summary: {
         if (root.glyph === "" && root.temperature === "")
@@ -54,11 +75,25 @@ Item {
         return Math.round(t) + "\u00b0C"
     }
 
+    function weekdayShort(dateStr) {
+        // Noon avoids timezone shifting the day.
+        const d = new Date(dateStr + "T12:00:00")
+        const names = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        return names[d.getDay()]
+    }
+
     function refresh() {
         if (fetch.running)
             return
         fetch.running = false
         fetch.running = true
+    }
+
+    function refreshCity() {
+        if (geoFetch.running)
+            return
+        geoFetch.running = false
+        geoFetch.running = true
     }
 
     function parse(text) {
@@ -71,14 +106,44 @@ Item {
             return
         }
         const current = data?.current
-        if (!current)
+        if (current) {
+            const g = root.glyphFor(current.weather_code)
+            const t = root.formatTemperature(current.temperature_2m)
+            if (g !== "")
+                root.glyph = g
+            if (t !== "")
+                root.temperature = t
+        }
+        const daily = data?.daily
+        if (daily && daily.time) {
+            let list = []
+            for (let i = 0; i < daily.time.length; i++) {
+                list.push({
+                    weekday: root.weekdayShort(daily.time[i]),
+                    glyph: root.glyphFor(daily.weather_code[i]),
+                    max: Math.round(daily.temperature_2m_max[i]),
+                    min: Math.round(daily.temperature_2m_min[i])
+                })
+            }
+            root.forecast = list
+        }
+    }
+
+    function parseCity(text) {
+        if (!text || text.trim() === "")
             return
-        const g = root.glyphFor(current.weather_code)
-        const t = root.formatTemperature(current.temperature_2m)
-        if (g !== "")
-            root.glyph = g
-        if (t !== "")
-            root.temperature = t
+        let data = null
+        try {
+            data = JSON.parse(text)
+        } catch (e) {
+            return
+        }
+        const c = data?.city || data?.locality || data?.principalSubdivision || ""
+        const k = data?.countryName || ""
+        if (c !== "")
+            root.city = c
+        if (k !== "")
+            root.country = k
     }
 
     Process {
@@ -90,6 +155,14 @@ Item {
         onExited: {
             if (root.temperature === "")
                 retryTimer.restart()
+        }
+    }
+
+    Process {
+        id: geoFetch
+        command: ["curl", "-sL", "--max-time", "10", root.geoEndpoint]
+        stdout: StdioCollector {
+            onStreamFinished: root.parseCity(this.text)
         }
     }
 
@@ -108,10 +181,16 @@ Item {
     Connections {
         target: NetworkStatusService
         function onWifiNetworkChanged() {
-            if (NetworkStatusService.wifiNetwork !== "")
+            if (NetworkStatusService.wifiNetwork !== "") {
                 Qt.callLater(root.refresh)
+                if (root.city === "")
+                    Qt.callLater(root.refreshCity)
+            }
         }
     }
 
-    Component.onCompleted: root.refresh()
+    Component.onCompleted: {
+        root.refresh()
+        root.refreshCity()
+    }
 }

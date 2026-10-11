@@ -30,10 +30,10 @@ Row {
             width: chipRow.implicitWidth + 24
             radius: 16
             color: index === root.currentMode
-                ? Theme.alpha(Theme.primary, 0.18)
+                ? Theme.secondaryContainer
                 : (chipMa.containsMouse ? Theme.alpha(Theme.inkSurf, 0.06) : "transparent")
-            border.width: index === root.currentMode ? 1 : 0
-            border.color: Theme.alpha(Theme.primary, 0.5)
+            border.width: 1
+            border.color: index === root.currentMode ? "transparent" : Theme.outlineVariant
             Behavior on color { ColorAnimation { duration: 120 } }
 
             RowLayout {
@@ -44,12 +44,12 @@ Row {
                 SvgIcon {
                     source: AppPaths.iconsDir + modelData.icon
                     size: 15
-                    tint: index === root.currentMode ? Theme.primary : Theme.inkSurfVar
+                    tint: index === root.currentMode ? Theme.inkSecCont : Theme.inkSurfVar
                 }
 
                 AppText {
                     text: modelData.label
-                    color: index === root.currentMode ? Theme.primary : Theme.inkSurfVar
+                    color: index === root.currentMode ? Theme.inkSecCont : Theme.inkSurfVar
                     font.pixelSize: 12
                     font.bold: index === root.currentMode
                 }

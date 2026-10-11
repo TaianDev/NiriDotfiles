@@ -266,11 +266,15 @@ Item {
             return
         const output = target.output
         root.workspaces = root.workspaces.map(ws => {
-            if (ws.output !== output)
-                return ws
-            const updated = Object.assign({}, ws, { is_active: ws.id === data.id })
+            let updated = ws
+            // is_active es por output.
+            if (ws.output === output)
+                updated = Object.assign({}, updated, { is_active: ws.id === data.id })
+            // is_focused es global: al enfocar un workspace hay que limpiar el
+            // flag en TODOS los demás (si no, focusedOutput puede devolver el
+            // workspace enfocado de otro monitor).
             if (data.focused)
-                updated.is_focused = ws.id === data.id
+                updated = Object.assign({}, updated, { is_focused: ws.id === data.id })
             return updated
         })
     }
