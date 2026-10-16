@@ -7,7 +7,8 @@ output_path = "~/.config/wlogout/colors.css"
 [templates.gtk3]
 input_path = "~/.config/matugen/templates/gtk-colors.css"
 output_path = '~/.config/gtk-3.0/gtk.css'
-post_hook = 'gsettings set org.gnome.desktop.interface gtk-theme "" && gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark "'
+# The GTK theme name + color-scheme (light/dark) and the live reload are handled
+# by scripts/apply_wallpaper.sh, which knows the resulting mode (including smart).
 
 [templates.gtk4]
 input_path = '~/.config/matugen/templates/gtk-colors.css'

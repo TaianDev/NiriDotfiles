@@ -137,7 +137,14 @@ QtObject {
     function resolveIconFromCandidates(candidates) {
         for (let i = 0; i < candidates.length; i++) {
             const name = candidates[i]
-            if (!name || name === "" || name === "zen" || name.includes(" "))
+            if (!name || name === "")
+                continue
+            // Iconos definidos con ruta (p. ej. `Icon=/opt/antigravity/icon.png`).
+            if (name.startsWith("file://"))
+                return name
+            if (name.startsWith("/"))
+                return "file://" + name
+            if (name === "zen" || name.includes(" "))
                 continue
             const path = root.resolveThemeIcon(name)
             if (path !== "")

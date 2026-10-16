@@ -41,7 +41,7 @@ Item {
 
         gradient: Gradient {
             GradientStop { position: 0.0; color: root.pillColor }
-            GradientStop { position: 1.0; color: root.gradient ? root._darkColor : root.pillColor }
+            GradientStop { position: 1.0; color: root.gradient && !Theme.isLight ? root._darkColor : root.pillColor }
         }
 
         Behavior on color { ColorAnimation { duration: 150 } }

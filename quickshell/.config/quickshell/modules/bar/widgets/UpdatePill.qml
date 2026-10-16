@@ -61,12 +61,12 @@ PillBase {
         SvgIcon {
             source: AppPaths.iconsDir + "ghost.svg"
             size: 14
-            tint: Theme.inkSurf
+            tint: Theme.inkSecCont
         }
 
         AppText {
             text: root.dnfCount.toString()
-            color: Theme.inkSurf
+            color: Theme.inkSecCont
             font.pixelSize: 12
             font.bold: true
         }
@@ -79,12 +79,12 @@ PillBase {
         SvgIcon {
             source: AppPaths.iconsDir + "packages.svg"
             size: 14
-            tint: Theme.inkSurf
+            tint: Theme.inkSecCont
         }
 
         AppText {
             text: root.flatpakCount.toString()
-            color: Theme.inkSurf
+            color: Theme.inkSecCont
             font.pixelSize: 12
             font.bold: true
         }

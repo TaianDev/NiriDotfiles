@@ -5,175 +5,175 @@
  */
 
 /* ─── PRIMARY ACCENT ────────────────────────────────────────────────────── */
-@define-color accent_color          {{colors.primary.dark.hex}};
-@define-color accent_fg_color       {{colors.on_primary.dark.hex}};
-@define-color accent_bg_color       {{colors.primary.dark.hex}};
+@define-color accent_color          {{colors.primary.default.hex}};
+@define-color accent_fg_color       {{colors.on_primary.default.hex}};
+@define-color accent_bg_color       {{colors.primary.default.hex}};
 
 /* ─── MAIN WINDOW — solid ───────────────────────────────────────────────── */
-@define-color window_bg_color       {{colors.surface_container.dark.hex}};
-@define-color window_fg_color       {{colors.on_surface.dark.hex}};
+@define-color window_bg_color       {{colors.surface_container.default.hex}};
+@define-color window_fg_color       {{colors.on_surface.default.hex}};
 
 /* ─── HEADERBAR — solid ─────────────────────────────────────────────────── */
-@define-color headerbar_bg_color        {{colors.surface_container_high.dark.hex}};
-@define-color headerbar_fg_color        {{colors.on_surface.dark.hex}};
-@define-color headerbar_border_color    {{colors.outline_variant.dark.hex}};
-@define-color headerbar_backdrop_color  {{colors.surface_container_low.dark.hex}};
-@define-color headerbar_shade_color     alpha({{colors.shadow.dark.hex}}, 0.30);
+@define-color headerbar_bg_color        {{colors.surface_container_high.default.hex}};
+@define-color headerbar_fg_color        {{colors.on_surface.default.hex}};
+@define-color headerbar_border_color    {{colors.outline_variant.default.hex}};
+@define-color headerbar_backdrop_color  {{colors.surface_container_low.default.hex}};
+@define-color headerbar_shade_color     alpha({{colors.shadow.default.hex}}, 0.30);
 
 /* ─── CONTENT VIEW — solid ──────────────────────────────────────────────── */
-@define-color view_bg_color         {{colors.surface_container_low.dark.hex}};
-@define-color view_fg_color         {{colors.on_surface.dark.hex}};
+@define-color view_bg_color         {{colors.surface_container_low.default.hex}};
+@define-color view_fg_color         {{colors.on_surface.default.hex}};
 
 /* ─── CARDS — solid ─────────────────────────────────────────────────────── */
-@define-color card_bg_color         {{colors.surface_container.dark.hex}};
-@define-color card_fg_color         {{colors.on_surface.dark.hex}};
-@define-color card_shade_color      alpha({{colors.shadow.dark.hex}}, 0.20);
+@define-color card_bg_color         {{colors.surface_container.default.hex}};
+@define-color card_fg_color         {{colors.on_surface.default.hex}};
+@define-color card_shade_color      alpha({{colors.shadow.default.hex}}, 0.20);
 
 /* ─── POPOVER / MENUS — slight transparency, "floating" effect ──────────── */
-@define-color popover_bg_color      alpha({{colors.surface_container_high.dark.hex}}, 0.95);
-@define-color popover_fg_color      {{colors.on_surface.dark.hex}};
-@define-color popover_shade_color   alpha({{colors.shadow.dark.hex}}, 0.25);
+@define-color popover_bg_color      alpha({{colors.surface_container_high.default.hex}}, 0.95);
+@define-color popover_fg_color      {{colors.on_surface.default.hex}};
+@define-color popover_shade_color   alpha({{colors.shadow.default.hex}}, 0.25);
 
 /* ─── SIDEBAR — solid ───────────────────────────────────────────────────── */
-@define-color sidebar_bg_color          {{colors.surface_container_low.dark.hex}};
-@define-color sidebar_fg_color          {{colors.on_surface_variant.dark.hex}};
-@define-color sidebar_border_color      {{colors.outline_variant.dark.hex}};
-@define-color sidebar_backdrop_color    {{colors.surface.dark.hex}};
-@define-color sidebar_selected_bg       {{colors.secondary_container.dark.hex}};
-@define-color sidebar_selected_fg       {{colors.on_secondary_container.dark.hex}};
+@define-color sidebar_bg_color          {{colors.surface_container_low.default.hex}};
+@define-color sidebar_fg_color          {{colors.on_surface_variant.default.hex}};
+@define-color sidebar_border_color      {{colors.outline_variant.default.hex}};
+@define-color sidebar_backdrop_color    {{colors.surface.default.hex}};
+@define-color sidebar_selected_bg       {{colors.secondary_container.default.hex}};
+@define-color sidebar_selected_fg       {{colors.on_secondary_container.default.hex}};
 
 /* ─── TEXT ──────────────────────────────────────────────────────────────── */
-@define-color secondary_fg_color    {{colors.on_surface_variant.dark.hex}};
-@define-color disabled_fg_color     alpha({{colors.on_surface.dark.hex}}, 0.38);
-@define-color placeholder_fg_color  alpha({{colors.on_surface.dark.hex}}, 0.50);
+@define-color secondary_fg_color    {{colors.on_surface_variant.default.hex}};
+@define-color disabled_fg_color     alpha({{colors.on_surface.default.hex}}, 0.38);
+@define-color placeholder_fg_color  alpha({{colors.on_surface.default.hex}}, 0.50);
 
 /* ─── SELECTION ─────────────────────────────────────────────────────────── */
-@define-color selected_bg_color     {{colors.primary_container.dark.hex}};
-@define-color selected_fg_color     {{colors.on_primary_container.dark.hex}};
+@define-color selected_bg_color     {{colors.primary_container.default.hex}};
+@define-color selected_fg_color     {{colors.on_primary_container.default.hex}};
 
 /* ─── HOVER AND ACTIVE — transparency over what is underneath ───────────── */
-@define-color hover_bg_color        alpha({{colors.on_surface.dark.hex}}, 0.08);
-@define-color active_bg_color       alpha({{colors.on_surface.dark.hex}}, 0.14);
-@define-color checked_bg_color      {{colors.secondary_container.dark.hex}};
-@define-color checked_fg_color      {{colors.on_secondary_container.dark.hex}};
-@define-color focus_color           alpha({{colors.primary.dark.hex}}, 0.30);
-@define-color focus_border_color    {{colors.primary.dark.hex}};
+@define-color hover_bg_color        alpha({{colors.on_surface.default.hex}}, 0.08);
+@define-color active_bg_color       alpha({{colors.on_surface.default.hex}}, 0.14);
+@define-color checked_bg_color      {{colors.secondary_container.default.hex}};
+@define-color checked_fg_color      {{colors.on_secondary_container.default.hex}};
+@define-color focus_color           alpha({{colors.primary.default.hex}}, 0.30);
+@define-color focus_border_color    {{colors.primary.default.hex}};
 
 /* ─── BORDERS ───────────────────────────────────────────────────────────── */
-@define-color borders_color         {{colors.outline_variant.dark.hex}};
-@define-color borders_edge          alpha({{colors.outline.dark.hex}}, 0.50);
-@define-color unfocused_borders     alpha({{colors.outline_variant.dark.hex}}, 0.70);
-@define-color shade_color           alpha({{colors.shadow.dark.hex}}, 0.20);
-@define-color scrollbar_outline_color alpha({{colors.outline_variant.dark.hex}}, 0.60);
+@define-color borders_color         {{colors.outline_variant.default.hex}};
+@define-color borders_edge          alpha({{colors.outline.default.hex}}, 0.50);
+@define-color unfocused_borders     alpha({{colors.outline_variant.default.hex}}, 0.70);
+@define-color shade_color           alpha({{colors.shadow.default.hex}}, 0.20);
+@define-color scrollbar_outline_color alpha({{colors.outline_variant.default.hex}}, 0.60);
 
 /* ─── SHADOWS — always transparent ──────────────────────────────────────── */
-@define-color shadow_color          alpha({{colors.shadow.dark.hex}}, 0.40);
-@define-color dialog_shadow         alpha({{colors.shadow.dark.hex}}, 0.50);
-@define-color menu_shadow           alpha({{colors.shadow.dark.hex}}, 0.35);
+@define-color shadow_color          alpha({{colors.shadow.default.hex}}, 0.40);
+@define-color dialog_shadow         alpha({{colors.shadow.default.hex}}, 0.50);
+@define-color menu_shadow           alpha({{colors.shadow.default.hex}}, 0.35);
 
 /* ─── THUMBNAILS ────────────────────────────────────────────────────────── */
-@define-color thumbnail_bg_color    {{colors.surface_container.dark.hex}};
-@define-color thumbnail_fg_color    {{colors.on_surface.dark.hex}};
+@define-color thumbnail_bg_color    {{colors.surface_container.default.hex}};
+@define-color thumbnail_fg_color    {{colors.on_surface.default.hex}};
 
 /* ─── NOTEBOOK / TABS ───────────────────────────────────────────────────── */
-@define-color notebook_bg_color         {{colors.surface_container.dark.hex}};
-@define-color tab_bg_color              {{colors.surface_container_low.dark.hex}};
-@define-color tab_fg_color              {{colors.on_surface_variant.dark.hex}};
-@define-color tab_selected_bg_color     {{colors.surface_container_high.dark.hex}};
-@define-color tab_selected_fg_color     {{colors.on_surface.dark.hex}};
+@define-color notebook_bg_color         {{colors.surface_container.default.hex}};
+@define-color tab_bg_color              {{colors.surface_container_low.default.hex}};
+@define-color tab_fg_color              {{colors.on_surface_variant.default.hex}};
+@define-color tab_selected_bg_color     {{colors.surface_container_high.default.hex}};
+@define-color tab_selected_fg_color     {{colors.on_surface.default.hex}};
 
 /* ─── TEXT ENTRIES ──────────────────────────────────────────────────────── */
-@define-color entry_bg_color        {{colors.surface_container_highest.dark.hex}};
-@define-color entry_fg_color        {{colors.on_surface.dark.hex}};
-@define-color entry_border_color    {{colors.outline.dark.hex}};
-@define-color entry_focus_border    {{colors.primary.dark.hex}};
-@define-color entry_error_border    {{colors.error.dark.hex}};
-@define-color entry_warning_border  {{colors.secondary.dark.hex}};
+@define-color entry_bg_color        {{colors.surface_container_highest.default.hex}};
+@define-color entry_fg_color        {{colors.on_surface.default.hex}};
+@define-color entry_border_color    {{colors.outline.default.hex}};
+@define-color entry_focus_border    {{colors.primary.default.hex}};
+@define-color entry_error_border    {{colors.error.default.hex}};
+@define-color entry_warning_border  {{colors.secondary.default.hex}};
 
 /* ─── BUTTONS ───────────────────────────────────────────────────────────── */
-@define-color button_bg_color           {{colors.surface_container_high.dark.hex}};
-@define-color button_fg_color           {{colors.on_surface.dark.hex}};
-@define-color button_border_color       {{colors.outline_variant.dark.hex}};
-@define-color button_hover_bg_color     {{colors.surface_container_highest.dark.hex}};
-@define-color button_active_bg_color    {{colors.secondary_container.dark.hex}};
-@define-color button_checked_bg_color   {{colors.primary_container.dark.hex}};
-@define-color button_checked_fg_color   {{colors.on_primary_container.dark.hex}};
+@define-color button_bg_color           {{colors.surface_container_high.default.hex}};
+@define-color button_fg_color           {{colors.on_surface.default.hex}};
+@define-color button_border_color       {{colors.outline_variant.default.hex}};
+@define-color button_hover_bg_color     {{colors.surface_container_highest.default.hex}};
+@define-color button_active_bg_color    {{colors.secondary_container.default.hex}};
+@define-color button_checked_bg_color   {{colors.primary_container.default.hex}};
+@define-color button_checked_fg_color   {{colors.on_primary_container.default.hex}};
 
 /* ─── TOOLBAR ───────────────────────────────────────────────────────────── */
-@define-color toolbar_bg_color      {{colors.surface_container_high.dark.hex}};
-@define-color toolbar_fg_color      {{colors.on_surface.dark.hex}};
-@define-color toolbar_border_color  {{colors.outline_variant.dark.hex}};
+@define-color toolbar_bg_color      {{colors.surface_container_high.default.hex}};
+@define-color toolbar_fg_color      {{colors.on_surface.default.hex}};
+@define-color toolbar_border_color  {{colors.outline_variant.default.hex}};
 
 /* ─── STATUSBAR ─────────────────────────────────────────────────────────── */
-@define-color statusbar_bg_color    {{colors.surface_container.dark.hex}};
-@define-color statusbar_fg_color    {{colors.on_surface_variant.dark.hex}};
+@define-color statusbar_bg_color    {{colors.surface_container.default.hex}};
+@define-color statusbar_fg_color    {{colors.on_surface_variant.default.hex}};
 
 /* ─── CONTEXT MENU — shadow + slight transparency ───────────────────────── */
-@define-color menu_bg_color         alpha({{colors.surface_container_high.dark.hex}}, 0.97);
-@define-color menu_fg_color         {{colors.on_surface.dark.hex}};
-@define-color menu_border_color     {{colors.outline_variant.dark.hex}};
-@define-color menu_selected_bg      {{colors.primary_container.dark.hex}};
-@define-color menu_selected_fg      {{colors.on_primary_container.dark.hex}};
-@define-color menu_separator_color  {{colors.outline_variant.dark.hex}};
+@define-color menu_bg_color         alpha({{colors.surface_container_high.default.hex}}, 0.97);
+@define-color menu_fg_color         {{colors.on_surface.default.hex}};
+@define-color menu_border_color     {{colors.outline_variant.default.hex}};
+@define-color menu_selected_bg      {{colors.primary_container.default.hex}};
+@define-color menu_selected_fg      {{colors.on_primary_container.default.hex}};
+@define-color menu_separator_color  {{colors.outline_variant.default.hex}};
 
 /* ─── TOOLTIPS — semi-transparent, floating effect ──────────────────────── */
-@define-color tooltip_bg_color      alpha({{colors.surface_container_highest.dark.hex}}, 0.92);
-@define-color tooltip_fg_color      {{colors.on_surface.dark.hex}};
-@define-color tooltip_borders_color alpha({{colors.outline.dark.hex}}, 0.60);
+@define-color tooltip_bg_color      alpha({{colors.surface_container_highest.default.hex}}, 0.92);
+@define-color tooltip_fg_color      {{colors.on_surface.default.hex}};
+@define-color tooltip_borders_color alpha({{colors.outline.default.hex}}, 0.60);
 
 /* ─── NOTIFICATIONS / OSD — moderate transparency ───────────────────────── */
-@define-color osd_bg_color          alpha({{colors.surface_container_highest.dark.hex}}, 0.88);
-@define-color osd_fg_color          {{colors.on_surface.dark.hex}};
-@define-color osd_border_color      alpha({{colors.outline_variant.dark.hex}}, 0.70);
+@define-color osd_bg_color          alpha({{colors.surface_container_highest.default.hex}}, 0.88);
+@define-color osd_fg_color          {{colors.on_surface.default.hex}};
+@define-color osd_border_color      alpha({{colors.outline_variant.default.hex}}, 0.70);
 
 /* ─── SWITCH / TOGGLE ───────────────────────────────────────────────────── */
-@define-color switch_bg_color           {{colors.surface_container_highest.dark.hex}};
-@define-color switch_checked_color      {{colors.primary.dark.hex}};
-@define-color switch_checked_fg_color   {{colors.on_primary.dark.hex}};
-@define-color switch_border_color       {{colors.outline.dark.hex}};
+@define-color switch_bg_color           {{colors.surface_container_highest.default.hex}};
+@define-color switch_checked_color      {{colors.primary.default.hex}};
+@define-color switch_checked_fg_color   {{colors.on_primary.default.hex}};
+@define-color switch_border_color       {{colors.outline.default.hex}};
 
 /* ─── PROGRESS BAR ──────────────────────────────────────────────────────── */
-@define-color progressbar_bg_color      {{colors.surface_container_highest.dark.hex}};
-@define-color progressbar_fg_color      {{colors.primary.dark.hex}};
-@define-color progressbar_trough_color  {{colors.surface_container_high.dark.hex}};
+@define-color progressbar_bg_color      {{colors.surface_container_highest.default.hex}};
+@define-color progressbar_fg_color      {{colors.primary.default.hex}};
+@define-color progressbar_trough_color  {{colors.surface_container_high.default.hex}};
 
 /* ─── SLIDER / SCALE ────────────────────────────────────────────────────── */
-@define-color slider_bg_color       {{colors.primary.dark.hex}};
-@define-color slider_trough_color   {{colors.surface_container_highest.dark.hex}};
-@define-color slider_mark_color     {{colors.outline.dark.hex}};
+@define-color slider_bg_color       {{colors.primary.default.hex}};
+@define-color slider_trough_color   {{colors.surface_container_highest.default.hex}};
+@define-color slider_mark_color     {{colors.outline.default.hex}};
 
 /* ─── SEMANTIC STATES — always solid ────────────────────────────────────── */
-@define-color success_color         {{colors.tertiary.dark.hex}};
-@define-color success_fg_color      {{colors.on_tertiary.dark.hex}};
-@define-color success_bg_color      {{colors.tertiary_container.dark.hex}};
+@define-color success_color         {{colors.tertiary.default.hex}};
+@define-color success_fg_color      {{colors.on_tertiary.default.hex}};
+@define-color success_bg_color      {{colors.tertiary_container.default.hex}};
 
-@define-color warning_color         {{colors.secondary.dark.hex}};
-@define-color warning_fg_color      {{colors.on_secondary.dark.hex}};
-@define-color warning_bg_color      {{colors.secondary_container.dark.hex}};
+@define-color warning_color         {{colors.secondary.default.hex}};
+@define-color warning_fg_color      {{colors.on_secondary.default.hex}};
+@define-color warning_bg_color      {{colors.secondary_container.default.hex}};
 
-@define-color error_color           {{colors.error.dark.hex}};
-@define-color error_fg_color        {{colors.on_error.dark.hex}};
-@define-color error_bg_color        {{colors.error_container.dark.hex}};
+@define-color error_color           {{colors.error.default.hex}};
+@define-color error_fg_color        {{colors.on_error.default.hex}};
+@define-color error_bg_color        {{colors.error_container.default.hex}};
 
 /* ─── DESTRUCTIVE ───────────────────────────────────────────────────────── */
-@define-color destructive_color     {{colors.error.dark.hex}};
-@define-color destructive_fg_color  {{colors.on_error.dark.hex}};
-@define-color destructive_bg_color  {{colors.error_container.dark.hex}};
+@define-color destructive_color     {{colors.error.default.hex}};
+@define-color destructive_fg_color  {{colors.on_error.default.hex}};
+@define-color destructive_bg_color  {{colors.error_container.default.hex}};
 
 /* ─── LINKS ─────────────────────────────────────────────────────────────── */
-@define-color link_color            {{colors.primary.dark.hex}};
-@define-color link_visited_color    {{colors.tertiary.dark.hex}};
+@define-color link_color            {{colors.primary.default.hex}};
+@define-color link_visited_color    {{colors.tertiary.default.hex}};
 
 /* ─── BADGE / COUNTER ───────────────────────────────────────────────────── */
-@define-color badge_bg_color        {{colors.primary.dark.hex}};
-@define-color badge_fg_color        {{colors.on_primary.dark.hex}};
+@define-color badge_bg_color        {{colors.primary.default.hex}};
+@define-color badge_fg_color        {{colors.on_primary.default.hex}};
 
 /* ─── DRAG AND DROP ─────────────────────────────────────────────────────── */
-@define-color drop_target_color     {{colors.primary.dark.hex}};
-@define-color drop_target_bg        alpha({{colors.primary.dark.hex}}, 0.15);
+@define-color drop_target_color     {{colors.primary.default.hex}};
+@define-color drop_target_bg        alpha({{colors.primary.default.hex}}, 0.15);
 
 /* ─── BACKDROP (unfocused window) — slightly dimmed ─────────────────────── */
-@define-color backdrop_bg_color         {{colors.surface.dark.hex}};
-@define-color backdrop_fg_color         alpha({{colors.on_surface.dark.hex}}, 0.65);
-@define-color backdrop_headerbar_color  {{colors.surface_container_low.dark.hex}};
-@define-color backdrop_border_color     alpha({{colors.outline_variant.dark.hex}}, 0.60);
+@define-color backdrop_bg_color         {{colors.surface.default.hex}};
+@define-color backdrop_fg_color         alpha({{colors.on_surface.default.hex}}, 0.65);
+@define-color backdrop_headerbar_color  {{colors.surface_container_low.default.hex}};
+@define-color backdrop_border_color     alpha({{colors.outline_variant.default.hex}}, 0.60);

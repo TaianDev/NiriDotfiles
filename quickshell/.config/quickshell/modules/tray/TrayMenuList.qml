@@ -5,20 +5,79 @@ import Quickshell
 import "../../components"
 import "../../core"
 
+// Un "nivel" del menú del tray. Mantiene SU PROPIO QsMenuOpener, ligado de forma
+// declarativa al handle (sin reasignaciones). Se instancia una vez por nivel de
+// la pila: los openers padre siguen vivos porque las entradas hijas pertenecen al
+// modelo del padre, y destruir/reutilizar el opener padre invalidaría el submenú.
 ColumnLayout {
     id: root
 
-    property var menuHandle: null
+    required property var menuHandle
     property bool showBack: false
 
     signal backRequested()
     signal entryActivated()
-    signal contentReady()
     signal submenuRequested(var entry)
+    signal contentReady()
+
+    readonly property real rowHeight: 34
+    readonly property real sepHeight: 7
 
     Layout.fillWidth: true
     Layout.fillHeight: true
     spacing: 0
+
+    QsMenuOpener {
+        id: menuOpener
+        menu: root.menuHandle
+    }
+
+    readonly property var entries: menuOpener.children.values
+
+    readonly property int contentHeight: {
+        let h = showBack ? 28 : 0
+        const e = entries
+        for (let i = 0; i < e.length; i++) {
+            const it = e[i]
+            if (!it)
+                continue
+            h += it.isSeparator ? sepHeight : rowHeight
+        }
+        return h
+    }
+
+    // Ancho natural del menú (según el texto/ícono más largo).
+    TextMetrics {
+        id: tm
+        font.family: Theme.fontFamily
+        font.pixelSize: 12
+    }
+
+    readonly property int contentWidth: {
+        let w = 0
+        const e = entries
+        for (let i = 0; i < e.length; i++) {
+            const it = e[i]
+            if (!it || it.isSeparator)
+                continue
+            tm.text = it.text ?? ""
+            let row = tm.advanceWidth + 16          // márgenes internos del row
+            if (it.icon && it.icon !== "")
+                row += 16 + 8                        // icono + spacing
+            if (it.hasChildren)
+                row += 8 + 12                        // spacing + flecha
+            if (row > w)
+                w = row
+        }
+        return Math.ceil(w)
+    }
+
+    Connections {
+        target: menuOpener
+        function onChildrenChanged() {
+            root.contentReady()
+        }
+    }
 
     RowLayout {
         Layout.fillWidth: true
@@ -40,50 +99,6 @@ ColumnLayout {
         }
     }
 
-    QsMenuOpener {
-        id: menuOpener
-    }
-
-    readonly property int contentHeight: {
-        let h = showBack ? 28 : 0
-        const entries = menuOpener.children.values
-        for (let i = 0; i < entries.length; i++) {
-            const entry = entries[i]
-            if (!entry)
-                continue
-            h += entry.isSeparator ? 7 : 34
-        }
-        return h
-    }
-
-    function bindMenu(handle) {
-        menuOpener.menu = null
-        if (!handle)
-            return
-        menuOpener.menu = handle
-        if (typeof handle.updateLayout === 'function')
-            handle.updateLayout()
-        asyncRefreshTimer.restart()
-    }
-
-    onMenuHandleChanged: bindMenu(menuHandle)
-
-    Timer {
-        id: asyncRefreshTimer
-        interval: 120
-        repeat: false
-        onTriggered: root.contentReady()
-    }
-
-    Component.onCompleted: bindMenu(menuHandle)
-
-    Connections {
-        target: menuOpener
-        function onChildrenChanged() {
-            root.contentReady()
-        }
-    }
-
     ScrollView {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -99,8 +114,8 @@ ColumnLayout {
 
                 delegate: Item {
                     required property var modelData
-                    width: parent.width
-                    height: modelData.isSeparator ? 7 : 34
+                    width: parent ? parent.width : 0
+                    height: modelData.isSeparator ? root.sepHeight : root.rowHeight
                     visible: modelData.isSeparator || modelData.text !== ""
 
                     Rectangle {

@@ -1,22 +1,30 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 import Quickshell
 import Quickshell.Services.SystemTray
 import "../../core"
 import "../../services"
 import "../../components"
 import "../../components/shell"
-import "."
 
-PopupWindow {
-    id: popup
+// Tray como panel cóncavo (MorphMenu) que crece desde el widget de la barra.
+// Página 0 = iconos; al pulsar uno con menú se "cambia de página" a sus opciones.
+// Cada nivel de menú es un TrayMenuList propio (con su opener), apilado; sólo el
+// nivel superior es visible. Así los submenús siguen siendo válidos y cada
+// apertura usa openers frescos.
+MorphMenu {
+    id: tray
 
-    required property var widgetRef
-    required property var parentWindow
+    property var hostWindow: null
+    property var widgetRef: null
 
-    readonly property bool open: widgetRef?.isOpened ?? false
+    open: tray.widgetRef?.isOpened ?? false
+    screen: tray.hostWindow ? tray.hostWindow.screen : null
+    anchorBottom: 0
+    concaveTop: 14
+    cornerBottom: 20
+
     readonly property var trayModel: SystemTray.items
     readonly property int trayCount: trayModel.values.length
 
@@ -24,375 +32,148 @@ PopupWindow {
     readonly property int iconGap: 6
     readonly property int iconsBoxWidth: Math.max(100, Math.min(320, trayCount * (iconCell + iconGap) + 20))
     readonly property int iconsBoxHeight: 40
-    readonly property int menuColumnWidth: 210
-    readonly property int submenuGap: 6
 
-    readonly property bool submenuActive: menuStack.length > 0
-    readonly property int totalMenuWidth: popup.menuColumnWidth
-        + (submenuActive ? popup.submenuGap + popup.menuColumnWidth : 0)
+    readonly property int maxMenuHeight: 380
+    readonly property int minMenuWidth: 170
+    readonly property int maxMenuWidth: 340
 
-    readonly property int leftBoxHeight: Math.min(300, menuArea.leftBoxContent + 16)
-    readonly property int rightBoxHeight: Math.min(300, menuArea.rightBoxContent + 16)
-
-    readonly property int menuPanelHeight: popup.menuOpen && popup.showMenuList
-        ? leftBoxHeight
-        : 0
-
-    color: "transparent"
-    implicitWidth: Math.max(iconsBoxWidth, totalMenuWidth)
-    implicitHeight: iconsBoxHeight + (menuOpen ? 8 + menuPanelHeight : 0)
-
-    property real anchorLeft: 0
-    property int selectedIndex: -1
-    property var selectedItem: null
-    property var menuStack: []
-    property bool menuOpen: false
-
-    readonly property var leftMenuHandle: selectedItem?.menu ?? null
-
-    readonly property var rightSubHandle: {
-        if (menuStack.length > 0)
-            return menuStack[menuStack.length - 1]
-        return null
+    // Rect del widget en la barra. `mapToItem` no es reactivo por sí solo, así
+    // que un TransformWatcher observa la geometría entre el contentItem del bar
+    // y el widget; referenciar `transform` reevalúa el binding cuando el layout
+    // se asienta o cualquier ancestro se mueve, de modo que el menú nace justo
+    // bajo el icono del tray.
+    TransformWatcher {
+        id: anchorWatch
+        a: tray.hostWindow ? tray.hostWindow.contentItem : null
+        b: tray.widgetRef
+        commonParent: tray.hostWindow ? tray.hostWindow.contentItem : null
+    }
+    collapsedRect: {
+        anchorWatch.transform
+        const w = tray.widgetRef
+        const hw = tray.hostWindow
+        if (!w || !hw || !hw.contentItem)
+            return Qt.rect(0, 0, 0, 0)
+        const p = w.mapToItem(hw.contentItem, 0, 0)
+        return Qt.rect(Math.round(p.x), 0, w.width, w.height)
     }
 
-    readonly property bool showMenuList: menuOpen && selectedItem !== null
-                                         && selectedItem.hasMenu
+    // Pila de handles de menú (nivel 0 = menú raíz de un icono). Vacía = iconos.
+    property var pageStack: []
 
-    readonly property bool rightShowBack: menuStack.length > 1
+    readonly property bool onIconsPage: pageStack.length === 0
 
-    property bool _fadeOut: false
-    visible: open || _fadeOut
+    // Tamaño del nivel superior (lo reporta su TrayMenuList vía contentReady).
+    property int menuWidth: tray.minMenuWidth
+    property int menuHeight: 44
 
-    grabFocus: open
+    expandedWidth: tray.onIconsPage
+        ? tray.iconsBoxWidth
+        : Math.max(tray.minMenuWidth, Math.min(tray.maxMenuWidth, tray.menuWidth + 20))
+    expandedHeight: tray.onIconsPage
+        ? tray.iconsBoxHeight
+        : Math.min(tray.maxMenuHeight, tray.menuHeight + 16)
 
-    property real _anchorY: 0
-    property bool _repQueued: false
+    onRequestClose: if (tray.widgetRef) tray.widgetRef.isOpened = false
 
-    function queueReposition() {
-        if (_repQueued) return
-        _repQueued = true
-        Qt.callLater(() => {
-            _repQueued = false
-            reposition()
-        })
-    }
-
-    function reposition() {
-        if (!widgetRef || !parentWindow)
+    function refreshTopSize() {
+        const n = tray.pageStack.length
+        if (n === 0)
             return
+        const it = menuRepeater.itemAt(n - 1)
+        if (it) {
+            tray.menuWidth = it.contentWidth
+            tray.menuHeight = it.contentHeight
+        }
+    }
 
-        const w = Math.max(100, implicitWidth)
-        const h = Math.max(iconsBoxHeight, implicitHeight)
-        if (w <= 0 || h <= 0)
+    function pushMenu(handle) {
+        if (!handle)
             return
-
-        const pos = widgetRef.mapToItem(parentWindow.contentItem, 0, widgetRef.height)
-        if (!popup.menuOpen || popup.anchorLeft === 0) {
-            popup.anchorLeft = pos.x + widgetRef.width / 2 - w / 2
-            popup._anchorY = pos.y + 8
-        }
-
-        anchor.window = parentWindow
-        anchor.rect = Qt.rect(popup.anchorLeft, popup._anchorY, 1, 1)
-        anchor.updateAnchor()
+        var s = tray.pageStack.slice()
+        s.push(handle)
+        tray.pageStack = s
+        Qt.callLater(tray.refreshTopSize)
     }
 
-    function clearSelection() {
-        popup.menuOpen = false
-        popup.selectedIndex = -1
-        popup.selectedItem = null
-        popup.menuStack = []
-        popup.activeSubEntry = null
+    // El menú de un icono se abre con su handle (`item.menu`), no con el item.
+    function openItemMenu(item) {
+        tray.pushMenu((item && item.menu) ? item.menu : item)
     }
 
-    function selectItem(index, item) {
-        if (index === popup.selectedIndex && popup.menuOpen) {
-            popup.clearSelection()
-            queueReposition()
+    function goBack() {
+        if (tray.pageStack.length === 0)
             return
-        }
-
-        if (popup.menuOpen) return
-
-        popup.selectedIndex = index
-        popup.selectedItem = item
-        popup.menuStack = []
-        popup.activeSubEntry = null
-
-        if (item.hasMenu) {
-            popup.menuOpen = true
-            Qt.callLater(() => {
-                if (leftLoader.item)
-                    leftLoader.item.bindMenu(popup.leftMenuHandle)
-            })
-        } else {
-            item.activate()
-            popup.clearSelection()
-        }
-        queueReposition()
-    }
-
-    function pushSubmenu(entry) {
-        var stack = popup.menuStack.slice()
-        stack.push(entry)
-        popup.menuStack = stack
-        queueReposition()
-    }
-
-    function popSubmenu() {
-        if (popup.menuStack.length === 0)
-            return
-        var stack = popup.menuStack.slice()
-        stack.pop()
-        popup.menuStack = stack
-        if (stack.length === 0)
-            popup.activeSubEntry = null
-        queueReposition()
-    }
-
-    property var activeSubEntry: null
-
-    function toggleSubmenu(entry) {
-        if (popup.submenuActive && popup.activeSubEntry === entry) {
-            popup.menuStack = []
-            popup.activeSubEntry = null
-        } else {
-            popup.menuStack = [entry]
-            popup.activeSubEntry = entry
-        }
-        queueReposition()
-    }
-
-    function closeSubmenu() {
-        popup.menuStack = []
-        popup.activeSubEntry = null
-        queueReposition()
-    }
-
-    onOpenChanged: {
-        if (open) {
-            _fadeOut = false
-            popup.anchorLeft = 0
-            clearSelection()
-            Qt.callLater(() => popup.contentItem.forceActiveFocus())
-            queueReposition()
-        } else {
-            _fadeOut = true
-            exitTimer.restart()
-        }
-    }
-
-    Timer {
-        id: exitTimer
-        interval: 200
-        onTriggered: _fadeOut = false
-    }
-
-    onMenuOpenChanged: {
-        if (!menuOpen)
-            popup.menuStack = []
-        queueReposition()
-    }
-
-    onImplicitHeightChanged: queueReposition()
-
-    Connections {
-        target: PopupManager
-        function onCloseRequested(id) {
-            if (id === PopupManager.trayId)
-                widgetRef.isOpened = false
-        }
-    }
-
-    onVisibleChanged: {
-        if (visible)
-            queueReposition()
+        var s = tray.pageStack.slice()
+        s.pop()
+        tray.pageStack = s
+        Qt.callLater(tray.refreshTopSize)
     }
 
     Connections {
-        target: trayModel
-        function onValuesChanged() {
-            if (popup.selectedItem === null) return
-            const items = trayModel.values
-            for (let i = 0; i < items.length; i++) {
-                if (items[i] === popup.selectedItem) {
-                    popup.selectedIndex = i
-                    return
-                }
+        target: tray
+        function onOpenChanged() {
+            if (tray.open) {
+                tray.pageStack = []
+                tray.menuWidth = tray.minMenuWidth
+                tray.menuHeight = 44
             }
-            popup.clearSelection()
         }
     }
 
     PopupEscCapture {
-        active: popup.open
+        active: tray.open
         popupId: PopupManager.trayId
 
-        Column {
-            id: rootCol
+        Item {
             anchors.fill: parent
-            spacing: 8
-            opacity: 1
 
-            // ═══ Icons bar ═══
-                Item {
-                id: iconsSlide
-                width: popup.iconsBoxWidth
-                height: popup.iconsBoxHeight
-                opacity: 1
+            // ── Página de iconos ──
+            Row {
+                anchors.centerIn: parent
+                visible: tray.onIconsPage
+                height: tray.iconCell
+                spacing: tray.iconGap
 
-                Rectangle {
-                    width: iconsSlide.width
-                    height: popup.iconsBoxHeight
-                    radius: 12
-                    color: Theme.background
-                    border.width: 1
-                    border.color: Theme.outlineVariant
-                    clip: true
-
-                    Row {
-                        anchors.centerIn: parent
-                        height: popup.iconCell
-                        spacing: popup.iconGap
-
-                        Repeater {
-                            model: trayModel
-
-                            Rectangle {
-                                id: iconBtn
-                                required property var modelData
-                                required property int index
-
-                                width: popup.iconCell
-                                height: popup.iconCell
-                                radius: 8
-                                color: index === popup.selectedIndex
-                                       ? Theme.alpha(Theme.primary, 0.18)
-                                       : (iconMa.containsMouse && !popup.menuOpen
-                                          ? Theme.alpha(Theme.inkSurf, 0.08)
-                                          : "transparent")
-                                border.width: index === popup.selectedIndex
-                                    || (iconMa.containsMouse && !popup.menuOpen) ? 1 : 0
-                                border.color: index === popup.selectedIndex
-                                    ? Theme.alpha(Theme.primary, 0.45)
-                                    : Theme.alpha(Theme.outlineVariant, 0.35)
-                                Behavior on color { ColorAnimation { duration: 150 } }
-
-                                Image {
-                                    anchors.centerIn: parent
-                                    width: 16
-                                    height: 16
-                                    source: iconBtn.modelData.icon
-                                    sourceSize: Qt.size(16, 16)
-                                    fillMode: Image.PreserveAspectFit
-                                    asynchronous: true
-                                    cache: true
-                                }
-
-                                MouseArea {
-                                    id: iconMa
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: popup.selectItem(iconBtn.index, iconBtn.modelData)
-                                }
-                            }
-                        }
-                    }
-
-                    AppText {
-                        anchors.centerIn: parent
-                        text: "No tray icons"
-                        color: Theme.inkSurfVar
-                        font.pixelSize: 11
-                        visible: trayCount === 0
-                    }
-                }
-            }
-
-            // ═══ Menu panels ═══
-            Item {
-                id: menuArea
-                width: parent.width
-                height: Math.max(menuSlide.height, rightWrap.height)
-
-                property int leftBoxContent: 64
-                property int rightBoxContent: 64
-
-                Item {
-                    id: menuSlide
-                    width: popup.menuColumnWidth
-                    height: Math.min(300, menuArea.leftBoxContent + 16)
-                    opacity: popup.menuOpen && popup.showMenuList ? 1 : 0
-                    Behavior on opacity { NumberAnimation { duration: 120 } }
+                Repeater {
+                    model: tray.trayModel
 
                     Rectangle {
-                        id: leftBox
-                        width: menuSlide.width
-                        height: menuSlide.height
-                        radius: 12
-                        color: Theme.background
-                        border.width: 1
-                        border.color: Theme.outlineVariant
+                        id: iconBtn
+                        required property var modelData
+                        required property int index
 
-                        Loader {
-                            id: leftLoader
-                            anchors.fill: parent
-                            anchors.margins: 8
-                            active: popup.showMenuList
-                            sourceComponent: leftMenuComponent
+                        width: tray.iconCell
+                        height: tray.iconCell
+                        radius: 8
+                        color: iconMa.containsMouse ? Theme.alpha(Theme.inkSurf, 0.1) : "transparent"
+                        border.width: iconMa.containsMouse ? 1 : 0
+                        border.color: Theme.alpha(Theme.outlineVariant, 0.35)
+                        Behavior on color { ColorAnimation { duration: 120 } }
 
-                            onLoaded: {
-                                if (item) {
-                                    menuArea.leftBoxContent = item.contentHeight
-                                    item.contentHeightChanged.connect(() => {
-                                        menuArea.leftBoxContent = item.contentHeight
-                                    })
-                                }
-                            }
+                        Image {
+                            anchors.centerIn: parent
+                            width: 16
+                            height: 16
+                            source: iconBtn.modelData.icon
+                            sourceSize: Qt.size(16, 16)
+                            fillMode: Image.PreserveAspectFit
+                            asynchronous: true
+                            cache: true
                         }
-                    }
-                }
 
-                Item {
-                    id: rightWrap
-                    x: popup.menuColumnWidth + popup.submenuGap
-                    anchors.top: menuSlide.top
-                    width: popup.menuColumnWidth
-                    height: Math.min(300, menuArea.rightBoxContent + 16)
-                    opacity: popup.submenuActive ? 1 : 0
-                    visible: opacity > 0
-
-                    Behavior on opacity {
-                        NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
-                    }
-
-                    Rectangle {
-                        id: rightBox
-                        width: popup.menuColumnWidth
-                        height: parent.height
-                        radius: 12
-                        color: Theme.background
-                        border.width: 1
-                        border.color: Theme.outlineVariant
-
-                        Loader {
-                            id: rightLoader
+                        MouseArea {
+                            id: iconMa
                             anchors.fill: parent
-                            anchors.margins: 8
-                            active: popup.submenuActive
-                            sourceComponent: rightMenuComponent
-
-                            property var handle: popup.rightSubHandle
-                            property bool back: popup.rightShowBack
-
-                            onLoaded: {
-                                if (item) {
-                                    menuArea.rightBoxContent = item.contentHeight
-                                    item.contentHeightChanged.connect(() => {
-                                        menuArea.rightBoxContent = item.contentHeight
-                                    })
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (iconBtn.modelData.hasMenu) {
+                                    tray.openItemMenu(iconBtn.modelData)
+                                } else {
+                                    iconBtn.modelData.activate()
+                                    if (tray.widgetRef)
+                                        tray.widgetRef.isOpened = false
                                 }
                             }
                         }
@@ -400,34 +181,34 @@ PopupWindow {
                 }
             }
 
-            Component {
-                id: leftMenuComponent
-
-                TrayMenuList {
-                    menuHandle: popup.leftMenuHandle
-                    showBack: false
-                    onSubmenuRequested: (entry) => popup.toggleSubmenu(entry)
-                    onEntryActivated: {
-                        if (widgetRef)
-                            widgetRef.isOpened = false
-                    }
-                    onContentReady: menuArea.leftBoxContent = contentHeight
-                }
+            AppText {
+                anchors.centerIn: parent
+                visible: tray.onIconsPage && tray.trayCount === 0
+                text: "No tray icons"
+                color: Theme.inkSurfVar
+                font.pixelSize: 11
             }
 
-            Component {
-                id: rightMenuComponent
+            // ── Pila de niveles de menú (sólo el superior visible) ──
+            Repeater {
+                id: menuRepeater
+                model: tray.pageStack.length
 
                 TrayMenuList {
-                    menuHandle: rightLoader.handle
-                    showBack: rightLoader.back
-                    onBackRequested: popup.popSubmenu()
-                    onSubmenuRequested: (entry) => popup.pushSubmenu(entry)
-                    onEntryActivated: {
-                        if (widgetRef)
-                            widgetRef.isOpened = false
+                    required property int index
+
+                    anchors.fill: parent
+                    anchors.margins: 8
+                    visible: index === tray.pageStack.length - 1
+                    menuHandle: tray.pageStack[index] ?? null
+                    showBack: true
+                    onBackRequested: tray.goBack()
+                    onSubmenuRequested: entry => tray.pushMenu(entry)
+                    onEntryActivated: if (tray.widgetRef) tray.widgetRef.isOpened = false
+                    onContentReady: {
+                        if (index === tray.pageStack.length - 1)
+                            tray.refreshTopSize()
                     }
-                    onContentReady: menuArea.rightBoxContent = contentHeight
                 }
             }
         }

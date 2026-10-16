@@ -63,13 +63,6 @@ PanelWindow {
         Keys.onPressed: event => hub.handleDateTabKey(event)
     }
 
-    property color _barDarkColor: Qt.rgba(
-        Theme.background.r * 0.6,
-        Theme.background.g * 0.6,
-        Theme.background.b * 0.6,
-        1
-    )
-
     Item {
         id: barShadowHost
         anchors.top: parent.top
@@ -86,7 +79,7 @@ PanelWindow {
 
             gradient: Gradient {
                 GradientStop { position: 0.0; color: Theme.background }
-                GradientStop { position: 1.0; color: flareBar._barDarkColor }
+                GradientStop { position: 1.0; color: Theme.panelShade }
             }
         }
 
@@ -97,7 +90,7 @@ PanelWindow {
             antialiasing: true
             layer.enabled: true; layer.samples: 8
             ShapePath {
-                fillColor: flareBar._barDarkColor; strokeWidth: 0
+                fillColor: Theme.panelShade; strokeWidth: 0
                 startX: 0; startY: 0
                 PathLine { x: flareBar.flareRadius; y: 0 }
                 PathQuad { x: 0; y: flareBar.flareRadius; controlX: 0; controlY: 0 }
@@ -111,7 +104,7 @@ PanelWindow {
             antialiasing: true
             layer.enabled: true; layer.samples: 8
             ShapePath {
-                fillColor: flareBar._barDarkColor; strokeWidth: 0
+                fillColor: Theme.panelShade; strokeWidth: 0
                 startX: 0; startY: 0
                 PathQuad {
                     x: flareBar.flareRadius; y: flareBar.flareRadius
@@ -128,7 +121,7 @@ PanelWindow {
         anchors.fill: barShadowHost
         horizontalOffset: 0; verticalOffset: 2
         radius: 4; samples: 8
-        color: Qt.rgba(0, 0, 0, 0.45)
+        color: Qt.rgba(0, 0, 0, Theme.isLight ? 0.22 : 0.45)
         source: barShadowHost
         transparentBorder: true
     }
@@ -138,7 +131,7 @@ PanelWindow {
         anchors.fill: barShadowHost
         horizontalOffset: 0; verticalOffset: 5
         radius: 14; samples: 22
-        color: Qt.rgba(0, 0, 0, 0.3)
+        color: Qt.rgba(0, 0, 0, Theme.isLight ? 0.14 : 0.3)
         source: barShadowHost
         transparentBorder: true
     }
@@ -314,8 +307,8 @@ PanelWindow {
         active: flareBar.isPrimary
         sourceComponent: Item {
             TrayPopup {
+                hostWindow: flareBar
                 widgetRef: trayWidgetPri
-                parentWindow: flareBar
             }
             NotificationPanel {
                 screen: flareBar.modelData

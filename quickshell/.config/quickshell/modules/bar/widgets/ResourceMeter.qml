@@ -64,14 +64,14 @@ Row {
         ColorOverlay {
             anchors.fill: icn
             source: icn
-            color: Theme.inkSurf
+            color: root.activeColor
         }
     }
 
     AppText {
         anchors.verticalCenter: parent.verticalCenter
         text: root.value + root.suffix
-        color: Theme.inkSurf
+        color: root.activeColor
         font.pixelSize: 13
         font.bold: true
     }

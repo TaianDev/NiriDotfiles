@@ -19,12 +19,13 @@ PanelWindow {
     }
 
     margins {
-        top: popups.barPopupTopY
-        right: 14
+        top: 0
+        right: 0
     }
 
-    implicitWidth: 340
-    height: toastColumn.height + 6
+    implicitWidth: 340 + 14
+    implicitHeight: popups.current !== null ? (toastItem.implicitHeight + 6) : 0
+    height: implicitHeight
 
     color: "transparent"
     exclusiveZone: 0
@@ -32,89 +33,44 @@ PanelWindow {
     WlrLayershell.namespace: "flare_notif_popups_" + screen.name
     WlrLayershell.layer: WlrLayer.Overlay
 
-    visible: popupsModel.count > 0 && !NotificationService.panelOpen
+    // Cola de a una: se muestra `current` hasta que salga; recién ahí entra otra.
+    property var current: null
 
-    ListModel { id: popupsModel }
+    visible: popups.current !== null && !NotificationService.panelOpen
 
-    function syncActivePopups() {
+    function pickCurrent() {
         const list = NotificationService.popups
-
-        var i = popupsModel.count - 1
-        while (i >= 0) {
-            if (list.indexOf(popupsModel.get(i).notification) < 0)
-                popupsModel.remove(i, 1)
-            i--
-        }
-
-        var targetIdx = 0
-        while (targetIdx < list.length) {
-            if (targetIdx >= popupsModel.count) {
-                popupsModel.append({ notification: list[targetIdx] })
-            } else if (popupsModel.get(targetIdx).notification !== list[targetIdx]) {
-                var src = -1
-                for (var j = targetIdx + 1; j < popupsModel.count; j++) {
-                    if (popupsModel.get(j).notification === list[targetIdx]) {
-                        src = j
-                        break
-                    }
-                }
-                if (src >= 0)
-                    popupsModel.remove(targetIdx, src - targetIdx)
-                else
-                    popupsModel.insert(targetIdx, { notification: list[targetIdx] })
-            }
-            targetIdx++
-        }
-
-        while (popupsModel.count > list.length)
-            popupsModel.remove(popupsModel.count - 1, 1)
+        // Mantener la actual mientras siga viva.
+        if (popups.current !== null && list.indexOf(popups.current) >= 0)
+            return
+        // FIFO: la más antigua (pushPopupNow pone las nuevas al frente).
+        popups.current = list.length > 0 ? list[list.length - 1] : null
     }
 
-    Component.onCompleted: Qt.callLater(syncActivePopups)
+    Component.onCompleted: Qt.callLater(pickCurrent)
 
     Connections {
         target: NotificationService
-        function onPopupVersionChanged() {
-            Qt.callLater(syncActivePopups)
-        }
+        function onPopupVersionChanged() { Qt.callLater(popups.pickCurrent) }
     }
 
-    Column {
-        id: toastColumn
+    NotificationPopupToast {
+        id: toastItem
         anchors.top: parent.top
         anchors.right: parent.right
-        spacing: 10
         width: parent.width
+        visible: popups.current !== null
+        notification: popups.current
 
-        move: Transition {
-            NumberAnimation {
-                properties: "y"
-                duration: 240
-                easing.type: Easing.OutCubic
-            }
-        }
-
-        Repeater {
-            model: popupsModel
-
-            NotificationPopupToast {
-                required property var modelData
-                required property int index
-                width: toastColumn.width
-                notification: modelData ?? null
-                visible: modelData !== null
-
-                onRequestClose: {
-                    if (!modelData)
-                        return
-                    const notif = modelData
-                    if (NotificationService.popups.indexOf(notif) >= 0) {
-                        const transient = notif.transient ?? false
-                        NotificationService.popPopup(notif)
-                        if (transient)
-                            notif.dismiss()
-                    }
-                }
+        onRequestClose: {
+            const notif = popups.current
+            if (!notif)
+                return
+            if (NotificationService.popups.indexOf(notif) >= 0) {
+                const transient = notif.transient ?? false
+                NotificationService.popPopup(notif)
+                if (transient)
+                    notif.dismiss()
             }
         }
     }

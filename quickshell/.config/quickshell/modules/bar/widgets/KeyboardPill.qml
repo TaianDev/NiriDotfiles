@@ -25,7 +25,7 @@ Item {
         x: 6
         source: root.iconsPath + "keyboard.svg"
         size: root.iconSize
-        tint: Theme.inkSurf
+        tint: Theme.inkTerCont
         opacity: ma.containsMouse ? 0.65 : 1.0
         Behavior on opacity { ColorAnimation { duration: 150 } }
     }
@@ -36,7 +36,7 @@ Item {
         anchors.leftMargin: 2
         anchors.verticalCenter: parent.verticalCenter
         text: root.activeLayout
-        color: Theme.inkSurf
+        color: Theme.inkTerCont
         font.pixelSize: 9
         font.bold: true
         visible: text !== ""

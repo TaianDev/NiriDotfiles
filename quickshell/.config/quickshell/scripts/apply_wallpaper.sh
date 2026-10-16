@@ -73,6 +73,49 @@ if ! matugen image "$WALLPAPER_PATH" \
   exit 1
 fi
 
+# 1.4 GTK: follow light/dark and reload running apps in place.
+# The resulting mode is read from the generated theme so matugen "smart" works too.
+THEME_QML="$HOME/.local/state/quickshell/Theme.qml"
+BG_HEX=""
+if [ -f "$THEME_QML" ]; then
+  BG_HEX=$(sed -n 's/.*property color background: "#\([0-9a-fA-F]\{6\}\)".*/\1/p' "$THEME_QML" | head -1)
+fi
+
+GTK_LIGHT=0
+if [ -n "$BG_HEX" ]; then
+  R=$((16#${BG_HEX:0:2}))
+  G=$((16#${BG_HEX:2:2}))
+  B=$((16#${BG_HEX:4:2}))
+  LUM=$(((299 * R + 587 * G + 114 * B) / 1000))
+  [ "$LUM" -gt 128 ] && GTK_LIGHT=1
+else
+  [ "$MODE" = "light" ] && GTK_LIGHT=1
+fi
+
+if [ "$GTK_LIGHT" -eq 1 ]; then
+  GTK_THEME_NAME="adw-gtk3"
+  GTK_COLOR_SCHEME="prefer-light"
+else
+  GTK_THEME_NAME="adw-gtk3-dark"
+  GTK_COLOR_SCHEME="prefer-dark"
+fi
+
+if command -v gsettings >/dev/null 2>&1; then
+  # Quickshell runs as a systemd --user service; ensure gsettings reaches the
+  # session bus even if the variable is not inherited.
+  export DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-unix:path=/run/user/$(id -u)/bus}"
+
+  CURRENT=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null | tr -d "'" | sed 's/[[:space:]]*$//')
+  # Changing light<->dark already changes the theme name (which reloads apps);
+  # when only the wallpaper changed, toggle the name so open apps re-read gtk.css.
+  if [ "$CURRENT" = "$GTK_THEME_NAME" ]; then
+    gsettings set org.gnome.desktop.interface gtk-theme "" 2>/dev/null || true
+    sleep 0.15
+  fi
+  gsettings set org.gnome.desktop.interface gtk-theme "$GTK_THEME_NAME" 2>/dev/null || true
+  gsettings set org.gnome.desktop.interface color-scheme "$GTK_COLOR_SCHEME" 2>/dev/null || true
+fi
+
 # 1.5 RELOAD OSD (swayosd-server only reads style.css on startup)
 pkill -x swayosd-server 2>/dev/null || true
 sleep 0.3

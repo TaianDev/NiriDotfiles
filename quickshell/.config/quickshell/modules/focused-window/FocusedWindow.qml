@@ -55,9 +55,9 @@ Item {
 
         SvgIcon {
             anchors.verticalCenter: parent.verticalCenter
-            source: AppPaths.iconsDir + "fedora.svg"
+            source: AppPaths.iconsDir + "fedora_2.svg"
             size: 16
-            tint: Theme.inkSurf
+            tint: Theme.primary
         }
 
         Column {

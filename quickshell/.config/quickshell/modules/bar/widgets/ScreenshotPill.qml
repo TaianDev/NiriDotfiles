@@ -17,7 +17,7 @@ Item {
         anchors.centerIn: parent
         source: root.iconsPath + "screenshot.svg"
         size: root.iconSize
-        tint: Theme.inkSurf
+        tint: Theme.primary
         opacity: ma.containsMouse ? 0.65 : 1.0
         Behavior on opacity { ColorAnimation { duration: 150 } }
     }

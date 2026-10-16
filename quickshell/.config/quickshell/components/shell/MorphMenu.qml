@@ -25,13 +25,9 @@ PanelWindow {
     property real concaveTop: 14
     property real cornerBottom: 18
 
-    // Color del panel: mismo que el borde inferior de la barra (gradiente a *0.6)
-    // para que la unión sea continua.
-    property color panelColor: Qt.rgba(
-        Theme.background.r * 0.6,
-        Theme.background.g * 0.6,
-        Theme.background.b * 0.6,
-        1)
+    // Color del panel: mismo que el borde inferior de la barra (en dark es
+    // background*0.6; en light queda plano, sin gris).
+    property color panelColor: Theme.panelShade
 
     default property alias content: contentInner.data
 
@@ -155,17 +151,29 @@ PanelWindow {
         MouseArea { anchors.fill: parent; onClicked: {} }
 
         // Contenido: tamaño FINAL fijo y contra-posicionado para quedar fijo en
-        // pantalla; la caja crece por encima y lo recorta (no se deforma).
+        // pantalla. Se recorta al tamaño actual de la caja (contentClip) para que
+        // se revele junto con la apertura en vez de aparecer completo antes de
+        // tiempo. El fondo `Shape` queda fuera de contentClip para no cortar los
+        // fillets cóncavos.
         Item {
-            id: contentWrap
-            x: menu.expandedRect.x - menu.boxX
-            y: menu.expandedRect.y - menu.boxY
-            width: menu.expandedWidth
-            height: menu.expandedHeight
-            opacity: 0
-            transform: Translate { id: contentShift; y: 0 }
+            id: contentClip
+            x: 0
+            y: 0
+            width: box.width
+            height: box.height
+            clip: true
 
-            Item { id: contentInner; anchors.fill: parent }
+            Item {
+                id: contentWrap
+                x: menu.expandedRect.x - menu.boxX
+                y: menu.expandedRect.y - menu.boxY
+                width: menu.expandedWidth
+                height: menu.expandedHeight
+                opacity: 0
+                transform: Translate { id: contentShift; y: 0 }
+
+                Item { id: contentInner; anchors.fill: parent }
+            }
         }
     }
 

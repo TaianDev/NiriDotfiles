@@ -17,6 +17,9 @@ quickshell/.config/quickshell/wallpaper.json
 quickshell/.config/quickshell/session
 *.log
 
+# --- Local notes / prompts ---
+quickshell/.config/quickshell/prompt
+
 # --- Screenshots ---
 wallpapers/Pictures/Screenshots/
 

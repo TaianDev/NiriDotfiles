@@ -56,7 +56,7 @@ Item {
         anchors.fill: parent
         spacing: 5
 
-        SvgIcon { source: root.icon; size: 13 }
+        SvgIcon { source: root.icon; size: 13; tint: Theme.secondary }
 
         ScrollingText {
             text: root.connected ? root.ssid
@@ -64,7 +64,7 @@ Item {
             Layout.preferredWidth: 52
             maxWidth: 52
             fontSize: 11
-            color: root.connected ? Theme.inkSurf : Theme.alpha(Theme.inkSurfVar, 0.7)
+            color: root.connected ? Theme.secondary : Theme.alpha(Theme.secondary, 0.7)
         }
 
         Row {

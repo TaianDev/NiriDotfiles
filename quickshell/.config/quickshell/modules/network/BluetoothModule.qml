@@ -36,6 +36,7 @@ Item {
                 ? root.iconsPath + "bluetooth.svg"
                 : root.iconsPath + "no-bluetooth.svg"
             size: 13
+            tint: Theme.secondary
         }
 
         ScrollingText {
@@ -44,7 +45,7 @@ Item {
             text:    root.deviceName
             maxWidth: 52
             fontSize: 11
-            color: Theme.inkSurf
+            color: Theme.secondary
         }
 
         AppText {
@@ -52,7 +53,7 @@ Item {
             visible: !root.enabled || root.deviceName === ""
             text:    root.enabled ? "No device" : "BT Off"
             font.pixelSize: 11
-            color:   Qt.rgba(1,1,1,0.4)
+            color:   Theme.alpha(Theme.secondary, 0.6)
         }
     }
 }

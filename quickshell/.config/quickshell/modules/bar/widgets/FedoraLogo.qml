@@ -12,10 +12,11 @@ Item {
     implicitWidth: 22
     implicitHeight: 28
 
+    // Glow: mismo icono difuminado, con su color original (sin tinte).
     SvgIcon {
         id: fedoraGlow
         anchors.centerIn: parent
-        source: root.iconsPath + "fedora.svg"
+        source: root.iconsPath + "fedora_2.svg"
         size: root.iconSize + 6
         tint: Theme.primary
         opacity: ma.containsMouse ? 0.55 : 0.38
@@ -27,11 +28,12 @@ Item {
         }
     }
 
+    // Logo principal: fedora_2.svg con color del tema.
     SvgIcon {
         anchors.centerIn: parent
-        source: root.iconsPath + "fedora.svg"
+        source: root.iconsPath + "fedora_2.svg"
         size: root.iconSize
-        tint: Theme.inkSurf
+        tint: Theme.primary
         opacity: ma.containsMouse ? 0.82 : 1.0
         Behavior on opacity { ColorAnimation { duration: 150 } }
     }

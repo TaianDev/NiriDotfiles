@@ -39,6 +39,18 @@ QtObject {
 
     property color inkBgMuted: "#9a9ca6"
 
+    // ─── MODE-AWARE DERIVED COLORS ───
+    // True for light palettes. Derived from the background lightness so it also
+    // covers matugen's "smart" mode.
+    readonly property bool isLight: background.hslLightness > 0.5
+
+    // Bottom edge of the bar, concave panels and toasts. Dark keeps the original
+    // darkening (background * 0.6); light stays flat so surfaces don't turn into
+    // a muddy gray and the bar has no gradient.
+    readonly property color panelShade: isLight
+        ? Qt.rgba(background.r, background.g, background.b, 1)
+        : Qt.rgba(background.r * 0.6, background.g * 0.6, background.b * 0.6, 1)
+
     // Aliases for semantic color names used across modules
     readonly property alias onBackground: root.inkBg
     readonly property alias onPrimary: root.inkPrim

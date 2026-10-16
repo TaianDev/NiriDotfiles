@@ -50,7 +50,7 @@ Item {
                 root.isOpened = false
             } else {
                 PopupManager.openExclusive(PopupManager.trayId)
-                Qt.callLater(() => root.isOpened = true)
+                root.isOpened = true
             }
         }
     }

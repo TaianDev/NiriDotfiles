@@ -154,7 +154,7 @@ PillBase {
                         sourceSize.width: 12; sourceSize.height: 12
                         fillMode: Image.PreserveAspectFit
                         layer.enabled: true
-                        layer.effect: ColorOverlay { color: Theme.inkSurf }
+                        layer.effect: ColorOverlay { color: Theme.primary }
                     }
                     SequentialAnimation {
                         id: tmIconBlinker
@@ -170,7 +170,7 @@ PillBase {
             AppText {
                 text: Qt.formatDateTime(sysClock.date, "HH:mm") + " \u2022 " +
                     Qt.formatDateTime(sysClock.date, "ddd, dd/MM") + " \u2022 " + root.tempString
-                color: Theme.inkSurf
+                color: Theme.primary
                 font.pixelSize: 12
                 font.bold: true
             }
@@ -198,11 +198,11 @@ PillBase {
 
             AppText {
                 text: TimeUtils.formatMSS(root.swElapsedMs)
-                color: Theme.inkSurf; font.pixelSize: 14; font.bold: true
+                color: Theme.primary; font.pixelSize: 14; font.bold: true
             }
 
             Rectangle { width: 24; height: 24; radius: 6; color: Qt.rgba(1, 1, 1, 0.1)
-                SvgIcon { anchors.centerIn: parent; source: root.iconsPath + "stop.svg"; size: 12; tint: Theme.inkSurf }
+                SvgIcon { anchors.centerIn: parent; source: root.iconsPath + "stop.svg"; size: 12; tint: Theme.primary }
                 MouseArea { anchors.fill: parent; onClicked: { if (root.currentViewState !== "stopwatch") return; root.swRunning = false; root.swElapsedMs = 0; root.showSwControls = false; if (root.tmActive) root.activeInstance = 2 } }
             }
             Rectangle { width: 24; height: 24; radius: 6; color: Qt.rgba(224/255, 108/255, 117/255, 0.2)
@@ -230,11 +230,11 @@ PillBase {
 
             AppText {
                 text: TimeUtils.formatHMSSecs(root.tmTotalSecs)
-                color: Theme.inkSurf; font.pixelSize: 14; font.bold: true
+                color: Theme.primary; font.pixelSize: 14; font.bold: true
             }
 
             Rectangle { width: 24; height: 24; radius: 6; color: Qt.rgba(1, 1, 1, 0.1)
-                SvgIcon { anchors.centerIn: parent; source: root.iconsPath + "stop.svg"; size: 12; tint: Theme.inkSurf }
+                SvgIcon { anchors.centerIn: parent; source: root.iconsPath + "stop.svg"; size: 12; tint: Theme.primary }
                 MouseArea { anchors.fill: parent; onClicked: { if (root.currentViewState !== "timer") return; root.tmRunning = false; root.tmActive = false; root.tmTotalSecs = 0; root.showTmControls = false; if (root.swElapsedMs > 0 || root.swRunning) root.activeInstance = 1 } }
             }
             Rectangle { width: 24; height: 24; radius: 6; color: Qt.rgba(180/255, 219/255, 146/255, 0.2)

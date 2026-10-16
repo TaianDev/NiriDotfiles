@@ -16,7 +16,7 @@ Item {
         anchors.centerIn: parent
         source: root.iconsPath + "ai.svg"
         size: root.iconSize
-        tint: Theme.inkSurf
+        tint: Theme.secondary
         opacity: ma.containsMouse ? 0.65 : 1.0
         Behavior on opacity { NumberAnimation { duration: 150 } }
     }

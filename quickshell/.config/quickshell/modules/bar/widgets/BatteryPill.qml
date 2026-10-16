@@ -51,12 +51,12 @@ PillBase {
         SvgIcon {
             source: root.iconsPath + root.iconFile
             size: 14
-            tint: Theme.inkSurf
+            tint: Theme.inkPrimCont
         }
 
         AppText {
             text: root.capacity.toString()
-            color: Theme.inkSurf
+            color: Theme.inkPrimCont
             font.pixelSize: 12
             font.bold: true
         }
